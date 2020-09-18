@@ -1,12 +1,13 @@
 import React from "react";
 import { Offline, Online } from "react-detect-offline";
 import Layout from "../../layout/navbar-layout";
-import { Grid, Cell } from "../../layout/grid-items";
 import Table from "./home-body";
 import { parseResults } from "../../app/manage-query-results";
-import { fetchWeather, fetchList } from "../../app/fetch-weather-for-locale";
-
-import { WeatherItem, CurrentWeatherItem } from "../../app/weather-item";
+import { fetchList } from "../../app/fetch-weather-for-locale";
+import { setLocales, selectLocales } from "../../state/locales-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { getWeatherItem } from "../../app/weather-item";
+import { sortLocaleList, mergeLists } from "../../app/locale-list-tools";
 
 const defaultQueries = [
 	"Beijing",
@@ -26,9 +27,12 @@ const defaultQueries = [
 	"Tokyo"
 ];
 
-const queryList = "Beijing";
-
-const testDetails = new CurrentWeatherItem(
+const testWeatherItem = getWeatherItem(
+	1,
+	false,
+	"New York",
+	"United States of America",
+	"2019-09-07 08:14",
 	"12:14 PM",
 	13,
 	"m",
@@ -44,35 +48,42 @@ const testDetails = new CurrentWeatherItem(
 	16
 );
 
-const testWeatherItem = new WeatherItem(
-	1,
-	"New York",
-	"United States of America",
-	"2019-09-07 08:14",
-	testDetails
-);
-
 const Body = () => {
-	const [ list, setList ] = React.useState([]);
+	const dispatch = useDispatch();
 	const [ loaded, setLoaded ] = React.useState(false);
+
+	const storedLocales = useSelector(selectLocales);
 
 	React.useEffect(() => {
 		const getWeatherList = async () => {
 			const result = await fetchList(defaultQueries);
+
+			//Generate and populate list of fresh results
 			const newList = [];
 			result.forEach((res) => newList.push(parseResults(res)));
-			setList(newList);
+
+			console.log(newList);
+
+			//Merge with the existing stored locales
+			const merged = mergeLists(storedLocales, newList);
+
+			//Sort the results
+			const sorted = sortLocaleList(merged);
+
+			dispatch(setLocales(sorted));
+
 			setLoaded(true);
 		}
 
 		getWeatherList();
+		//setLoaded(true);
 		
 	}, []);
 
 	return (
 		<>
 			{(Online) &&
-				<Table items={list} loaded={loaded} />
+				<Table items={storedLocales.locales} loaded={loaded} />
 			}
 		</>
 	)

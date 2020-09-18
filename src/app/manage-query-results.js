@@ -1,14 +1,17 @@
-import { fetchWeather, scaleIsValid } from "./fetch-weather-for-locale";
-import { METRIC_SCALE } from "./constants";
-import { WeatherItem, CurrentWeatherItem } from "./weather-item";
 import { uniqueId } from "lodash";
+import { getWeatherItem } from "./weather-item";
 
 export const parseResults = (results) => {
 	if (results.success === false) {
 		return results;
 	}
 
-	const details = new CurrentWeatherItem(
+	return getWeatherItem(
+		uniqueId(),
+		false,
+		results.location.name,
+		results.location.country,
+		results.location.localtime,
 		results.current.observation_time,
 		results.current.temperature,
 		results.request.unit,
@@ -22,13 +25,5 @@ export const parseResults = (results) => {
 		results.current.feelslike,
 		results.current.uv_index,
 		results.current.visibility
-	);
-
-	return new WeatherItem(
-		uniqueId(),
-		results.location.name,
-		results.location.country,
-		results.location.localtime,
-		details
 	);
 }

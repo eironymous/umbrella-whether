@@ -1,14 +1,13 @@
-import { configureStore, applyMiddleware } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import routerReducer from "./router-slice";
-import favoritesReducer from "./favorites-slice";
+import localesReducer from "./locales-slice";
 import { throttle } from "lodash";
 import { saveState, loadState } from "./persistence/save-load";
 
 const store =  configureStore({
 	reducer: {
 		router: routerReducer,
-		favorites: favoritesReducer,
-		
+		locales: localesReducer,
 	},
 	preloadedState: loadState()
 });
