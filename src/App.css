@@ -1,0 +1,10 @@
+.App {
+  text-align: center;
+  background-color: #22223B;
+  color: rgb(255, 255, 255);
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
+  min-width: 1200px;
+}
+
