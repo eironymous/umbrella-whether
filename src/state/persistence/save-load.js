@@ -1,5 +1,6 @@
 /**
  * Persists the current state tree to local storage.
+ * Returns true if saving succeeds.
  * @param {obj} state 
  */
 export const saveState = (state) => {
@@ -10,6 +11,8 @@ export const saveState = (state) => {
 		console.log(err);
 		throw err;
 	}
+
+	return true;
 };
 
 /**

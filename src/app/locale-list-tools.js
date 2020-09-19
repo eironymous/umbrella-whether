@@ -2,8 +2,8 @@ import { findIndex, concat, differenceWith, intersectionWith, isEqual, isEmpty, 
 
 /**
  * Merges two lists of WeatherItems, ensuring no duplicate entries are added
- * @param {WeatherItem[]} oldList
- * @param {WeatherItem[]} newList
+ * @param {[]} oldList
+ * @param {[]} newList
  * @param {boolean} omitFavorites - prevents merging of favorites, used when merging newly-fetched data into existing store
  */
 export const mergeLists = (oldList, newList, omitFavorites = false) => {
@@ -71,7 +71,7 @@ export const mergeLists = (oldList, newList, omitFavorites = false) => {
 
 /**
  * Takes a list of WeatherItems and sorts that list alphabetically by city name
- * @param {WeatherItem[]} list 
+ * @param {[]} list 
  */
 export const sortLocaleList = (list) => {
 	return sortListByCity(list, 0, list.length - 1);
@@ -79,29 +79,31 @@ export const sortLocaleList = (list) => {
 
 /**
  * Takes a list of WeatherItems and extracts only those found in a list of ids.
- * @param {WeatherItem[]} weatherItemList
+ * @param {[]} weatherItemList
  * @param {String} idList 
  */
 export const generateListById = (weatherItemList, idList) => {
-	const output = [];
+	const output = [...weatherItemList];
 
-	weatherItemList.forEach((item) => {
-		const idx = findIndex(idList, (id) => {
-			let matches = (id.localeCompare(item.id) === 0) ? true : false;
-			return matches;
-		});
+	pullAllWith(output, idList, (a, b) => isEqual(a.id, b));
 
-		if (idx !== -1) {
-			output.push(item);
-		}
-	});
+	// weatherItemList.forEach((item) => {
+	// 	const idx = findIndex(idList, (id) => {
+	// 		let matches = (id.localeCompare(item.id) === 0) ? true : false;
+	// 		return matches;
+	// 	});
+
+	// 	if (idx !== -1) {
+	// 		output.push(item);
+	// 	}
+	// });
 
 	return output;
 }
 
 /**
  * Reorders a list of weatherItems to place all favourites at the front, still in alphabetical order.
- * @param {WeatherItem[]} list 
+ * @param {[]} list 
  */
 export const reorderByFavorite = (list) => {
 	const sorted = sortListByCity(list, 0, list.length - 1);
