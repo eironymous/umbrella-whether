@@ -1,9 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import { setFavorite } from "../state/locales-slice";
 import { FontAwesomeIcon as Icon } from "@fortawesome/react-fontawesome";
 import { Grid, Cell } from "./grid-items";
 import Card from "./card";
 import { FAHRENHEIT_SCALE, METRIC_SCALE, SCIENTIFIC_SCALE } from "../app/constants";
+import { reorderByFavorite } from "../app/locale-list-tools";
+
 
 const ListEntryCard = styled(Card)`
 	position: relative;
@@ -16,6 +20,15 @@ const ListEntryCard = styled(Card)`
 	width: 90%;
 	left: 50%;
 	transform: translateX(-50%);
+`;
+
+const CityCell = styled(Cell)`
+	font-weight: 600;
+	opacity: 0.7;
+	cursor: pointer;
+	:hover {
+		opacity: 1;
+	}
 `;
 
 /**
@@ -40,7 +53,9 @@ const getUnits = (scale) => {
  * Defines a single list entry in a table of weather results.
  * Takes a WeatherEntryItem and a row number. 
  */
-const ListEntry = ({ entry, row }) => {
+const ListEntry = ({ entry, row, items }) => {
+	const dispatch = useDispatch();
+
 	if (entry === undefined) return null;
 
 	const units = getUnits(entry.scale);
@@ -52,13 +67,21 @@ const ListEntry = ({ entry, row }) => {
 					<Cell>
 						<Icon icon={["far", "eye"]} />
 					</Cell>
-					<Cell col="2">
+					<CityCell col="2">
 						{`${entry.city} - ${entry.country}`}
-					</Cell>
+					</CityCell>
 					<Cell col="3">
-						{`${entry.temperature} °${units} at ${entry.observationTime}`}
+						{`${entry.temperature} °${units} at ${entry.observationTime} UTC`}
 					</Cell>
 					<Cell col="4">
+						{entry.favorited &&
+							<Icon icon="heart" onClick={() => dispatch(setFavorite({ id: entry.id, favorite: false, allLocales: items }))}/>
+						}
+						{!entry.favorited &&
+							<Icon icon={["far", "heart"]} onClick={() => dispatch(setFavorite({ id: entry.id, favorite: true, allLocales: items }))} />
+						}
+					</Cell>
+					<Cell col="5">
 						<Icon icon="minus-circle" />
 					</Cell>
 				</Grid>
@@ -70,13 +93,19 @@ const ListEntry = ({ entry, row }) => {
 const Table = ({
 	items
 }) => {
+	const [ list, setList ] = React.useState(items);
+
+	React.useEffect(() => {
+		const favsFirst = reorderByFavorite(items);
+		setList(favsFirst);
+	}, [items]);
 
 	if (items === undefined || !items.length) return null;
 
 	return(
-		<Grid columns="1fr" rows={`repeat(${items.length}, 3em)`} gridGap="10px">
-			{items.map((entry, idx) => {
-				return (<ListEntry entry={entry} key={`weather-list-entry-${entry.id}:${idx}`} row={idx + 1} />);
+		<Grid columns="1fr" rows={`repeat(${list.length}, 3em)`} gridGap="10px">
+			{list.map((entry, idx) => {
+				return (<ListEntry entry={entry} key={`weather-list-entry-${entry.id}:${idx}`} row={idx + 1} items={items} />);
 			})}
 		</Grid>
 	)

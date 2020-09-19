@@ -23,6 +23,11 @@ const NavItem = styled(Grid)`
 	margin-left: 10%;
 	border-radius: 18px 0 0 18px;
 	height: 100%;
+	opacity: 0.7;
+
+	:hover {
+		opacity: 1;
+	}
 `;
 
 const NavText = styled(Cell)`
@@ -66,14 +71,14 @@ const Logo = () => {
 	)
 }
 
-const NavEntry = ({ navOpen, Icon, text, active }) => {
+const NavEntry = ({ navOpen, icon, text, active }) => {
 	return(
-		<NavItem active={active} columns="1fr 4fr">
-			<Cell>
-				{Icon && <Icon />}
-			</Cell>
-			<NavText col="2">
+		<NavItem active={active} columns="4fr 1fr">
+			<NavText>
 				{navOpen && <span>{text}</span>}
+			</NavText>
+			<NavText col="2">
+				{icon && <Icon icon={icon} />}
 			</NavText>
 		</NavItem>
 	)
@@ -104,19 +109,20 @@ export default ({
 						<Logo/>
 					}
 					{navOpen && 
-						<span>{"\<"}</span>
+						<span>{"<"}</span>
 					}
 					{!navOpen &&
-						<span>{"\>"}</span>
+						<span>{">"}</span>
 					}
 				</Header>
 			</HeaderCell>
 			<Cell row="2">
 				<NavEntry 
-					active={activeRoute === allRoutes.home}
+					active={activeRoute === allRoutes.home || /^details/.test(activeRoute)}
 					onClick={() => dispatch(updateRoute(allRoutes.home))}
 					navOpen={navOpen}
 					text="Home"
+					icon="home"
 				/>
 			</Cell>
 			<Cell row="3">
@@ -124,6 +130,7 @@ export default ({
 					active={activeRoute === allRoutes.help}
 					navOpen={navOpen}
 					text="Help"
+					icon="question"
 				/>
 			</Cell>
 			<Cell row="4">
@@ -131,6 +138,7 @@ export default ({
 					active={activeRoute === allRoutes.about} 
 					navOpen={navOpen}
 					text="About"
+					icon="info"
 				/>
 			</Cell>
 		</Nav>

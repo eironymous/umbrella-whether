@@ -4,15 +4,16 @@ import { findIndex, concat } from "lodash";
  * Merges two lists of WeatherItems, ensuring no duplicate entries are added
  * @param {WeatherItem[]} oldList
  * @param {WeatherItem[]} newList
+ * @param {boolean} omitFavorites - prevents merging of favorites, used when merging newly-fetched data into existing store
  */
-export const mergeLists = (oldList, newList) => {
+export const mergeLists = (oldList, newList, omitFavorites = false) => {
 	const output = [];
 
-	//Iterate over new list
-	newList.forEach((entry) => {
+	//Iterate over old list
+	oldList.forEach((entry) => {
 		//Check if old list contains the current city
-		const idx = findIndex(oldList, (o) =>  { 
-			let matches =  (o.id.localeCompare(entry.id) === 0) ? true : false; 
+		const idx = findIndex(newList, (o) =>  { 
+			let matches =  (o.city.localeCompare(entry.city) === 0) ? true : false; 
 			return matches;
 		});
 
@@ -21,26 +22,43 @@ export const mergeLists = (oldList, newList) => {
 			output.push(entry);
 		} else {
 			//Otherwise update the relevant fields and push the merged entry
-			const oldEntry = {...oldList[idx]};
-			oldEntry.country = entry.country;
-			oldEntry.localTime = entry.localTime;
-			oldEntry.observationTime = entry.observationTime;
-			oldEntry.temperature = entry.temperature;
-			oldEntry.scale = entry.scale;
-			oldEntry.iconUrl = entry.iconUrl;
-			oldEntry.descriptions = entry.descriptions;
-			oldEntry.windSpeed = entry.windSpeed;
-			oldEntry.pressure = entry.pressure;
-			oldEntry.precipitation = entry.precipitation;
-			oldEntry.humidity = entry.humidity;
-			oldEntry.cloudCover = entry.cloudCover;
-			oldEntry.feelsLike = entry.feelsLike;
-			oldEntry.uvIndex = entry.uvIndex;
-			oldEntry.visibility = entry.visibility;
+			const updatedEntry = {...entry};
+			updatedEntry.city = newList[idx].city;
+			updatedEntry.country = newList[idx].country;
+			updatedEntry.favorited = omitFavorites ? entry.favorited : newList[idx].favorited;
+			updatedEntry.localTime = newList[idx].localTime;
+			updatedEntry.observationTime = newList[idx].observationTime;
+			updatedEntry.temperature = newList[idx].temperature;
+			updatedEntry.scale = newList[idx].scale;
+			updatedEntry.iconUrl = newList[idx].iconUrl;
+			updatedEntry.descriptions = newList[idx].descriptions;
+			updatedEntry.windSpeed = newList[idx].windSpeed;
+			updatedEntry.pressure = newList[idx].pressure;
+			updatedEntry.precipitation = newList[idx].precipitation;
+			updatedEntry.humidity = newList[idx].humidity;
+			updatedEntry.cloudCover = newList[idx].cloudCover;
+			updatedEntry.feelsLike = newList[idx].feelsLike;
+			updatedEntry.uvIndex = newList[idx].uvIndex;
+			updatedEntry.visibility = newList[idx].visibility;
 
-			output.push(oldEntry);
+			output.push(updatedEntry);
 		}	
 	});
+
+	//Iterate over new list
+	newList.forEach((entry) => {
+		//If the entry has not already been pushed to output
+		const idx = findIndex(output, (o) => {
+			let matches = (o.city.localeCompare(entry.city) === 0 ? true : false);
+			return matches;
+		});
+
+		if (idx === -1) {
+			output.push(entry);
+		}
+	})
+
+	console.log(output);
 
 	return output;
 }

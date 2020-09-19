@@ -41,6 +41,7 @@ const testWeatherItem = getWeatherItem(
 	0,
 	"N",
 	0,
+	0,
 	90,
 	0,
 	13,
@@ -62,10 +63,8 @@ const Body = () => {
 			const newList = [];
 			result.forEach((res) => newList.push(parseResults(res)));
 
-			console.log(newList);
-
 			//Merge with the existing stored locales
-			const merged = mergeLists(storedLocales, newList);
+			const merged = mergeLists(storedLocales.locales, newList, true);
 
 			//Sort the results
 			const sorted = sortLocaleList(merged);
@@ -75,15 +74,15 @@ const Body = () => {
 			setLoaded(true);
 		}
 
-		getWeatherList();
-		//setLoaded(true);
+		//getWeatherList();
+		setLoaded(true);
 		
 	}, []);
 
 	return (
 		<>
 			{(Online) &&
-				<Table items={storedLocales.locales} loaded={loaded} />
+				<Table items={storedLocales.locales || testWeatherItem} loaded={loaded} />
 			}
 		</>
 	)
