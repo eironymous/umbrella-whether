@@ -1,4 +1,12 @@
-import { findIndex, concat, differenceWith, intersectionWith, isEqual, isEmpty, pullAllWith } from "lodash";
+import { 
+	findIndex, 
+	concat, 
+	differenceWith, 
+	intersectionWith, 
+	isEqual, 
+	isEmpty, 
+	pullAllWith 
+} from "lodash";
 
 /**
  * Merges two lists of WeatherItems, ensuring no duplicate entries are added
@@ -83,22 +91,19 @@ export const sortLocaleList = (list) => {
  * @param {String} idList 
  */
 export const generateListById = (weatherItemList, idList) => {
-	const output = [...weatherItemList];
+	//If weatherItemList is not an array or is an object without an id field, throw error
+	if (!isArray(weatherItemList) && weatherItemList.id === undefined) {
+		throw TypeError("First parameter must be an array.");
+	}
 
-	pullAllWith(output, idList, (a, b) => isEqual(a.id, b));
+	//If only one entry and it exists in the list, return that entry
+	if (!isArray(weatherItemList) || weatherItemList.length === 1) {
+		if (weatherItemList.id !== undefined && idList.includes(weatherItemList.id)) {
+			return [weatherItemList];
+		}
+	}
 
-	// weatherItemList.forEach((item) => {
-	// 	const idx = findIndex(idList, (id) => {
-	// 		let matches = (id.localeCompare(item.id) === 0) ? true : false;
-	// 		return matches;
-	// 	});
-
-	// 	if (idx !== -1) {
-	// 		output.push(item);
-	// 	}
-	// });
-
-	return output;
+	return intersectionWith(weatherItemList, idList, (a, b) => isEqual(a.id, b));
 }
 
 /**
@@ -112,7 +117,7 @@ export const reorderByFavorite = (list) => {
 	const normal = [];
 
 	sorted.forEach((item) => {
-		if (item.favorite) {
+		if (item.favorited) {
 			fav.push(item);
 		} else {
 			normal.push(item);
@@ -120,6 +125,23 @@ export const reorderByFavorite = (list) => {
 	});
 
 	return concat(fav, normal);
+}
+
+/**
+ * Takes a list of weatherItems and removes the entry with the provided id, if it exists.
+ * @param {[]} list 
+ * @param {String} id 
+ */
+export const removeById = (list, id) => {
+	if(!isArray(list)) {
+		throw TypeError("Input must be a list.");
+	}
+
+	const copy = list.slice();
+
+	pullAllWith(copy, id, (a, b) => a.id.localeCompare(b) === 0);
+
+	return copy;
 }
 
 ///////////// HELPER FUNCTIONS ////////////
@@ -203,3 +225,5 @@ const sortListByCity = (items, left, right) => {
 
 	return items;
 }
+
+const { isArray } = Array;

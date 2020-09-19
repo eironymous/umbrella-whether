@@ -12,9 +12,9 @@ const store =  configureStore({
 	preloadedState: loadState()
 });
 
-//Persist the current state tree to storage at most every 5 seconds
+//Persist the current state tree to storage at most every 10 seconds
 store.subscribe(throttle(
-	() => saveState(store.getState(), 5000)
+	() => saveState(store.getState(), 10000)
 ));
 
 export default store;
