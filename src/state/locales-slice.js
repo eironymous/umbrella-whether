@@ -23,7 +23,6 @@ export const localesSlice = createSlice({
 		//Set favorite
 		setFavorite: (state, {payload}) => {
 			const allLocales = payload.allLocales;
-			console.log(allLocales, payload);
 
 			//Find the index of the locale in question
 			const idx = findIndex(allLocales, (item) => item.id === payload.id);
@@ -32,10 +31,8 @@ export const localesSlice = createSlice({
 				const item = {...allLocales[idx]};
 				item.favorited = payload.favorite;
 
-				console.log(item);
 				const merged = mergeLists(allLocales, [item]);
 				const sorted = sortLocaleList(merged);
-				console.log("sorted:", sorted);
 
 				state.locales = sorted;
 			}

@@ -1,4 +1,4 @@
-import { findIndex, concat } from "lodash";
+import { findIndex, concat, differenceWith, intersectionWith, isEqual, isEmpty, pullAllWith } from "lodash";
 
 /**
  * Merges two lists of WeatherItems, ensuring no duplicate entries are added
@@ -7,60 +7,66 @@ import { findIndex, concat } from "lodash";
  * @param {boolean} omitFavorites - prevents merging of favorites, used when merging newly-fetched data into existing store
  */
 export const mergeLists = (oldList, newList, omitFavorites = false) => {
-	const output = [];
+	//Copy input arrays
+	const oldCopy = oldList.slice();
+	const newCopy = newList.slice();
 
-	//Iterate over old list
-	oldList.forEach((entry) => {
-		//Check if old list contains the current city
-		const idx = findIndex(newList, (o) =>  { 
-			let matches =  (o.city.localeCompare(entry.city) === 0) ? true : false; 
-			return matches;
+	//Begin by extracting exactly matching values and adding to the output array
+	const output = intersectionWith(oldCopy, newCopy, isEqual);
+
+	//Pull distinct values from both arrays
+	const oldDifference = differenceWith(oldCopy, newCopy, isEqual);
+	const newDifference = differenceWith(newCopy, oldCopy, isEqual);
+
+	//Store the names of any cities with updated entries
+	const copiedCities = [];
+
+	//Compare the resulting arrays
+	if (!isEmpty(oldDifference)) {
+		oldDifference.forEach((entry) => {
+			const idx = findIndex(newDifference, (o) => {
+				return o.city.localeCompare(entry.city) === 0;
+			});
+
+			//If a matching index is not found, push the entry without changes
+			if (idx === -1) {
+				output.push(entry);
+			} else {
+				//Else copy all relevant values to new object...
+				const updatedEntry = { ...entry };
+				updatedEntry.city = newList[idx].city;
+				updatedEntry.country = newList[idx].country;
+				//...omitting favorited field if appropriate
+				updatedEntry.favorited = omitFavorites ? entry.favorited : newList[idx].favorited;
+				updatedEntry.localTime = newList[idx].localTime;
+				updatedEntry.observationTime = newList[idx].observationTime;
+				updatedEntry.temperature = newList[idx].temperature;
+				updatedEntry.scale = newList[idx].scale;
+				updatedEntry.iconUrl = newList[idx].iconUrl;
+				updatedEntry.descriptions = newList[idx].descriptions;
+				updatedEntry.windDirection = newList[idx].windDirection;
+				updatedEntry.windSpeed = newList[idx].windSpeed;
+				updatedEntry.pressure = newList[idx].pressure;
+				updatedEntry.precipitation = newList[idx].precipitation;
+				updatedEntry.humidity = newList[idx].humidity;
+				updatedEntry.cloudCover = newList[idx].cloudCover;
+				updatedEntry.feelsLike = newList[idx].feelsLike;
+				updatedEntry.uvIndex = newList[idx].uvIndex;
+				updatedEntry.visibility = newList[idx].visibility;
+
+				//Add the updated entry to the output array
+				output.push(updatedEntry);
+				//Store the city name for faster checking against remaining values in new list
+				copiedCities.push(entry.city);
+			}
 		});
+	}
 
-		//If the entry doesn't already exist, add it to the list
-		if (idx === -1) {
-			output.push(entry);
-		} else {
-			//Otherwise update the relevant fields and push the merged entry
-			const updatedEntry = {...entry};
-			updatedEntry.city = newList[idx].city;
-			updatedEntry.country = newList[idx].country;
-			updatedEntry.favorited = omitFavorites ? entry.favorited : newList[idx].favorited;
-			updatedEntry.localTime = newList[idx].localTime;
-			updatedEntry.observationTime = newList[idx].observationTime;
-			updatedEntry.temperature = newList[idx].temperature;
-			updatedEntry.scale = newList[idx].scale;
-			updatedEntry.iconUrl = newList[idx].iconUrl;
-			updatedEntry.descriptions = newList[idx].descriptions;
-			updatedEntry.windSpeed = newList[idx].windSpeed;
-			updatedEntry.pressure = newList[idx].pressure;
-			updatedEntry.precipitation = newList[idx].precipitation;
-			updatedEntry.humidity = newList[idx].humidity;
-			updatedEntry.cloudCover = newList[idx].cloudCover;
-			updatedEntry.feelsLike = newList[idx].feelsLike;
-			updatedEntry.uvIndex = newList[idx].uvIndex;
-			updatedEntry.visibility = newList[idx].visibility;
+	//Remove any cities already in output array
+	pullAllWith(newDifference, copiedCities, (a, b) => { return isEqual(a.city, b); });
+	const concatenated = concat(output, newDifference);
 
-			output.push(updatedEntry);
-		}	
-	});
-
-	//Iterate over new list
-	newList.forEach((entry) => {
-		//If the entry has not already been pushed to output
-		const idx = findIndex(output, (o) => {
-			let matches = (o.city.localeCompare(entry.city) === 0 ? true : false);
-			return matches;
-		});
-
-		if (idx === -1) {
-			output.push(entry);
-		}
-	})
-
-	console.log(output);
-
-	return output;
+	return concatenated;
 }
 
 /**

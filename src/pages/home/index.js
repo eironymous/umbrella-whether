@@ -4,7 +4,7 @@ import Layout from "../../layout/navbar-layout";
 import Table from "./home-body";
 import { parseResults } from "../../app/manage-query-results";
 import { fetchList } from "../../app/fetch-weather-for-locale";
-import { setLocales, selectLocales } from "../../state/locales-slice";
+import { setLocales, mergeLocales, selectLocales } from "../../state/locales-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { getWeatherItem } from "../../app/weather-item";
 import { sortLocaleList, mergeLists } from "../../app/locale-list-tools";
@@ -63,13 +63,7 @@ const Body = () => {
 			const newList = [];
 			result.forEach((res) => newList.push(parseResults(res)));
 
-			//Merge with the existing stored locales
-			const merged = mergeLists(storedLocales.locales, newList, true);
-
-			//Sort the results
-			const sorted = sortLocaleList(merged);
-
-			dispatch(setLocales(sorted));
+			dispatch(mergeLocales(newList));
 
 			setLoaded(true);
 		}
