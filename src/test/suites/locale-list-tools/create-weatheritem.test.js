@@ -13,6 +13,7 @@ test('weatheritem appropriately generated', () => {
 		"United States of America",
 		"2019-09-07 08:14",
 		"12:14 PM",
+		"-4.0",
 		13,
 		"m",
 		"http://www.website.com",

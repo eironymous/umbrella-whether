@@ -12,6 +12,7 @@
  * @param {String} country - The country associated with the request
  * @param {String} localtime - The current local time at location associated with the request
  * @param {String} observationtime - The time of the latest observation
+ * @param {String} utcOffset - The time zone offset from UTC
  * @param {String} temperature - The temperature at time of latest observation
  * @param {String} scale - The scale used for the temperature and precipitation measurements
  * @param {String} iconUrl - The url of the icon provided by weatherstack
@@ -33,6 +34,7 @@ const getWeatherItem = (
 	country,
 	localTime,
 	observationTime,
+	utcOffset,
 	temperature,
 	scale,
 	iconUrl,
@@ -53,6 +55,7 @@ const getWeatherItem = (
 	country,
 	localTime,
 	observationTime,
+	utcOffset,
 	temperature,
 	scale,
 	iconUrl,

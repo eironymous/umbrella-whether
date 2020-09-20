@@ -71,14 +71,15 @@ const Logo = () => {
 	)
 }
 
-const NavEntry = ({ navOpen, icon, text, active }) => {
+const NavEntry = ({ navOpen, icon, text, active, onClick = noop }) => {
 	return(
-		<NavItem active={active} columns="4fr 1fr">
-			<NavText>
-				{navOpen && <span>{text}</span>}
-			</NavText>
+		<NavItem active={active} onClick={onClick} columns="4fr 1fr 2fr">
+			<Cell></Cell>
 			<NavText col="2">
 				{icon && <Icon icon={icon} />}
+			</NavText>
+			<NavText col="3">
+				{navOpen && <span>{text}</span>}
 			</NavText>
 		</NavItem>
 	)
@@ -130,7 +131,7 @@ export default ({
 					active={activeRoute === allRoutes.help}
 					navOpen={navOpen}
 					text="Help"
-					icon="question"
+					icon="question-circle"
 				/>
 			</Cell>
 			<Cell row="4">
@@ -138,7 +139,7 @@ export default ({
 					active={activeRoute === allRoutes.about} 
 					navOpen={navOpen}
 					text="About"
-					icon="info"
+					icon="info-circle"
 				/>
 			</Cell>
 		</Nav>

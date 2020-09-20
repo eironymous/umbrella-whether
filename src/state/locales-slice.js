@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { findIndex } from "lodash";
-import { mergeLists, sortLocaleList } from "../app/locale-list-tools";
+import { mergeLists, sortLocaleList, getLocaleById } from "../app/locale-list-tools";
 
 export const localesSlice = createSlice({
 	name: "locales",
@@ -16,7 +16,7 @@ export const localesSlice = createSlice({
 		//Merge a list of locales with the extant list
 		mergeLocales: (state, {payload}) => {
 			const allLocales = [...state.locales];
-			const merged = mergeLists(allLocales, payload);
+			const merged = mergeLists(allLocales, payload, true);
 			const sorted = sortLocaleList(merged);
 			state.locales = sorted;
 		},
@@ -43,5 +43,6 @@ export const localesSlice = createSlice({
 export const { setLocales, mergeLocales, setFavorite } = localesSlice.actions;
 
 export const selectLocales = state => state.locales;
+export const selectLocaleById = (state, id) => getLocaleById(state.locales.locales, id);
 
 export default localesSlice.reducer;

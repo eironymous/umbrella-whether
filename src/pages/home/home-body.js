@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Grid, Cell } from "../../layout/grid-items";
 import Table from "../../layout/results-table";
+import { reorderByFavorite } from "../../app/locale-list-tools";
 
 const Body = styled(Grid)`
 	padding: 2em;
@@ -46,7 +47,9 @@ const HomeList = ({
 				newList.push(item);
 			});
 
-			setList(newList);
+			const sorted = reorderByFavorite(newList);
+
+			setList(sorted);
 		}
 	}
 

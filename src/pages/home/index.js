@@ -7,7 +7,6 @@ import { fetchList } from "../../app/fetch-weather-for-locale";
 import { setLocales, mergeLocales, selectLocales } from "../../state/locales-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { getWeatherItem } from "../../app/weather-item";
-import { sortLocaleList, mergeLists } from "../../app/locale-list-tools";
 
 const defaultQueries = [
 	"Beijing",

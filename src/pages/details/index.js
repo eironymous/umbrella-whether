@@ -1,10 +1,25 @@
 import React from "react";
-import styled from "styled-components";
-import { Grid, Cell } from "../../layout/grid-items";
-import Card from "../../layout/card";
+import { useSelector } from "react-redux";
+import Layout from "../../layout/navbar-layout";
+import { selectLocaleById } from "../../state/locales-slice";
+import DetailsCard from "./detail-card";
 
-const Details = ({ id }) => {
+const Body = ({ locale }) => {
+	return(
+		<DetailsCard locale={locale} />
+	)
+}
 
+const Details = ({ id, activeRoute, allRoutes }) => {
+	const locale = useSelector((state) => selectLocaleById(state, id));
+
+	return (
+		<Layout
+			Main={() => <Body locale={locale} />}
+			activeRoute={activeRoute}
+			allRoutes={allRoutes}
+		/>
+	);
 };
 
 export default Details;

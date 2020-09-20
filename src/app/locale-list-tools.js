@@ -5,7 +5,8 @@ import {
 	intersectionWith, 
 	isEqual, 
 	isEmpty, 
-	pullAllWith 
+	pullAllWith,
+	takeWhile,
 } from "lodash";
 
 /**
@@ -38,7 +39,7 @@ export const mergeLists = (oldList, newList, omitFavorites = false) => {
 
 			//If a matching index is not found, push the entry without changes
 			if (idx === -1) {
-				output.push(entry);
+				output.push({...entry});
 			} else {
 				//Else copy all relevant values to new object...
 				const updatedEntry = { ...entry };
@@ -48,6 +49,7 @@ export const mergeLists = (oldList, newList, omitFavorites = false) => {
 				updatedEntry.favorited = omitFavorites ? entry.favorited : newList[idx].favorited;
 				updatedEntry.localTime = newList[idx].localTime;
 				updatedEntry.observationTime = newList[idx].observationTime;
+				updatedEntry.utcOffset = newList[idx].utcOffset;
 				updatedEntry.temperature = newList[idx].temperature;
 				updatedEntry.scale = newList[idx].scale;
 				updatedEntry.iconUrl = newList[idx].iconUrl;
@@ -142,6 +144,20 @@ export const removeById = (list, id) => {
 	pullAllWith(copy, id, (a, b) => a.id.localeCompare(b) === 0);
 
 	return copy;
+}
+
+export const getLocaleById = (list, id) => {
+	if(!isArray(list)) {
+		throw TypeError("First parameter must be a list.");
+	}
+
+	for (let i = 0; i < list.length; i++) {
+		if (isEqual(list[i].id, id)) {
+			return list[i];
+		}
+	}
+
+	return undefined;
 }
 
 ///////////// HELPER FUNCTIONS ////////////

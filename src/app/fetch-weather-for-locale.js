@@ -38,8 +38,6 @@ export const fetchList = (localeList, scale = METRIC_SCALE) => {
 		list.push(axiosRequest(locale, scale));
 	});
 
-	console.log(list);
-
 	return Promise.all(list).then((vals) => vals);
 }
 
