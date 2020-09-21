@@ -11,12 +11,12 @@ import { FAHRENHEIT_SCALE, METRIC_SCALE, SCIENTIFIC_SCALE } from "./constants";
 export const fetchWeather = (locale, scale = METRIC_SCALE) => {
 	//Validate inputs - locale must be defined
 	if (!locale) {
-		throw "Locale cannot be undefined or null.";
+		throw TypeError("Locale cannot be undefined or null.");
 	}
 
 	//Scale must be within three acceptable values defined in constants.js
 	if (!scaleIsValid(scale)) {
-		throw "fetch-weather-for-locale: Invalid scale parameter passed: must be 'm', 's', or 'f'.";
+		throw TypeError("fetch-weather-for-locale: Invalid scale parameter passed: must be 'm', 's', or 'f'.");
 	}
 
 	//Make request, extract data from promise and return
@@ -25,11 +25,11 @@ export const fetchWeather = (locale, scale = METRIC_SCALE) => {
 
 export const fetchList = (localeList, scale = METRIC_SCALE) => {
 	if (!localeList) {
-		throw "List of locales cannot be undefined or null.";
+		throw TypeError("List of locales cannot be undefined or null.");
 	}
 
 	if (!scaleIsValid(scale)) {
-		throw "Invalid scale parameter passed: must be 'm', 's', or 'f'.";
+		throw TypeError("Invalid scale parameter passed: must be 'm', 's', or 'f'.");
 	}
 
 	const list = [];

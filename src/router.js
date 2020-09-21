@@ -13,7 +13,7 @@ export default () => {
 			return <Home activeRoute={currentRoute} allRoutes={allRoutes} />;
 		case /^details/.test(currentRoute): {
 			//Split the route into route + id
-			const portions = currentRoute.split("-");
+			const portions = currentRoute.split(/-(.+)/);
 			//Isolate the id from the route pattern
 			const id = portions[1];
 			//Use the id to fetch the correct details

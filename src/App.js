@@ -14,7 +14,16 @@ import {
   faHeart as fullHeart,
   faMoon,
   faCloudSun,
-  faCloudMoon
+  faCloudMoon,
+  faCloudSunRain,
+  faCloudMoonRain,
+  faSmog,
+  faSnowflake,
+  faWind,
+  faCloudRain,
+  faBolt,
+  faCloudShowersHeavy,
+  faSurprise,
 } from "@fortawesome/free-solid-svg-icons";
 import { faEye, faHeart as emptyHeart, faSun } from "@fortawesome/free-regular-svg-icons";
 import { Provider } from "react-redux";
@@ -35,6 +44,15 @@ library.add(
   faMoon,
   faCloudSun,
   faCloudMoon,
+  faCloudSunRain,
+  faCloudMoonRain,
+  faSmog,
+  faSnowflake,
+  faWind,
+  faCloudRain,
+  faBolt,
+  faCloudShowersHeavy,
+  faSurprise
 );
 
 const AppWrapper = () => {
@@ -47,8 +65,8 @@ const AppWrapper = () => {
 }
 
 function App() {
-  // const dispatch = useDispatch();
-  // dispatch(updateRoute("home"));
+  const dispatch = useDispatch();
+  dispatch(updateRoute("home"));
 
   return (
     <div className="App">

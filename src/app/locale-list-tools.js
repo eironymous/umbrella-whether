@@ -6,7 +6,6 @@ import {
 	isEqual, 
 	isEmpty, 
 	pullAllWith,
-	takeWhile,
 } from "lodash";
 
 /**
@@ -160,6 +159,21 @@ export const getLocaleById = (list, id) => {
 	return undefined;
 }
 
+export const getLocaleByCity = (list, city) => {
+	if (!isArray(list)) {
+		throw TypeError("First parameter must be a list.");
+	}
+
+	for (let i = 0; i < list.length; i++) {
+		if (list[i].city.localeCompare(city) === 0) {
+			console.log(list[i]);
+			return list[i];
+		}
+	}
+
+	return undefined;
+}
+
 ///////////// HELPER FUNCTIONS ////////////
 
 /**
@@ -171,7 +185,7 @@ export const getLocaleById = (list, id) => {
  */
 const partition = (list, left, right) => {
 	if (!list || !list.length) {
-		throw "Attempting to sort empty list.";
+		throw TypeError("List parameter must not be empty.");
 	}
 
 	let pivot = list[Math.floor((right + left) / 2)];
@@ -218,7 +232,7 @@ const swap = (items, left, right) => {
 const sortListByCity = (items, left, right) => {
 	if (!items || !items.length) {
 		//Safety error check in case I've beefed something
-		throw "locales-slice.js: Attempting to sort empty or undefined list.";
+		throw TypeError("List parameter cannot be empty");
 	}
 
 	let index = undefined;

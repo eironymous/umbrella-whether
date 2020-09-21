@@ -33,43 +33,51 @@ const ListCell = styled(Cell)`
 	scrollbar-width: 4px;
 `;
 
+const WaitingText = styled.div`
+	font-weight: 800;
+	text-align: left;
+	font-size: 1em;
+	letter-spacing: 2px;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+`;
+
 const HomeList = ({
 	items = [],
 	loaded
 }) => {
 	const [ list, setList ] = React.useState(items);
 
-	const updateList = () => {
-		let newList = [];
-
-		if (items.length) {
-			items.forEach((item) => {
-				newList.push(item);
-			});
-
-			const sorted = reorderByFavorite(newList);
-
-			setList(sorted);
-		}
-	}
-
 	React.useEffect(() => {
+		const updateList = () => {
+			let newList = [];
+
+			if (items.length) {
+				items.forEach((item) => {
+					newList.push(item);
+				});
+
+				const sorted = reorderByFavorite(newList);
+
+				setList(sorted);
+			}
+		}
+
 		updateList();
 	}, [items]);
 
 	if (!items) return null;
 
 	return(
-		<Body rows="2em 80vh" columns="1fr">
-			<Cell>
-				Some Text Here:
-			</Cell>
-			<ListCell row="2">
+		<Body rows="80vh" columns="1fr">
+			<ListCell>
 				{loaded && 
 					<Table items={list} />
 				}
 				{!loaded &&
-					<span>Please wait while we poke our heads outside...</span>
+					<WaitingText>Please wait while we poke our heads outside...</WaitingText>
 				}
 			</ListCell>
 		</Body>

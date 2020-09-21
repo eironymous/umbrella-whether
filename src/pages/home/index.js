@@ -7,6 +7,7 @@ import { fetchList } from "../../app/fetch-weather-for-locale";
 import { setLocales, mergeLocales, selectLocales } from "../../state/locales-slice";
 import { useDispatch, useSelector } from "react-redux";
 import { getWeatherItem } from "../../app/weather-item";
+import EmptyState from "./empty-state";
 
 const defaultQueries = [
 	"Beijing",
@@ -62,7 +63,11 @@ const Body = () => {
 			const newList = [];
 			result.forEach((res) => newList.push(parseResults(res)));
 
-			dispatch(mergeLocales(newList));
+			if (storedLocales.locales.length) {
+				dispatch(mergeLocales(newList));
+			} else {
+				dispatch(setLocales(newList));
+			}
 
 			setLoaded(true);
 		}
@@ -70,23 +75,46 @@ const Body = () => {
 		//getWeatherList();
 		setLoaded(true);
 		
-	}, []);
+	}, [storedLocales.locales.length, dispatch]);
+
+	if (storedLocales.locales === undefined || storedLocales.locales.length === 0) {
+		return <EmptyState />
+	}
 
 	return (
-		<>
-			{(Online) &&
-				<Table items={storedLocales.locales || testWeatherItem} loaded={loaded} />
-			}
-		</>
+		<Table items={storedLocales.locales } loaded={loaded} />
+	)
+}
+
+const OfflineBody = () => {
+	const storedLocales = useSelector(selectLocales);
+
+	if (storedLocales.locales === undefined || storedLocales.locales.length === 0) {
+		return <EmptyState />
+	}
+
+	return (
+		<Table items={storedLocales.locales} />
 	)
 }
 
 export default ({ activeRoute, allRoutes }) => {
 	return(
-		<Layout 
-			Main={Body}
-			activeRoute={activeRoute}
-			allRoutes={allRoutes}
-		/>
+		<>
+			<Online>
+				<Layout 
+					Main={Body}
+					activeRoute={activeRoute}
+					allRoutes={allRoutes}
+				/>
+			</Online>
+			<Offline>
+				<Layout 
+					Main={OfflineBody}
+					activeRoute={activeRoute}
+					allRoutes={allRoutes}
+				/>
+			</Offline>
+		</>
 	)
 }

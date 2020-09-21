@@ -2,12 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { updateRoute } from "../state/router-slice";
-import { setFavorite } from "../state/locales-slice";
+import { setFavorite, deleteById } from "../state/locales-slice";
 import { FontAwesomeIcon as Icon } from "@fortawesome/react-fontawesome";
 import { Grid, Cell } from "./grid-items";
 import Card from "./card";
 import { FAHRENHEIT_SCALE, METRIC_SCALE, SCIENTIFIC_SCALE } from "../app/constants";
-import { reorderByFavorite } from "../app/locale-list-tools";
 
 
 const ListEntryCard = styled(Card)`
@@ -69,7 +68,7 @@ const ListEntry = ({ entry, row, items }) => {
 	if (entry === undefined) return null;
 
 	const units = getUnits(entry.scale);
-	const time = entry.localTime.split(" ")[1];
+	const time = entry.localTime ? entry.localTime.split(" ")[1] : "Unknown Time";
 
 	return (
 		<Cell row={row}>
@@ -93,7 +92,11 @@ const ListEntry = ({ entry, row, items }) => {
 						}
 					</Cell>
 					<Cell col="5">
-						<Icon icon="minus-circle" />
+						<Icon 
+							icon="minus-circle" 
+							onClick={() => dispatch(deleteById({ id: entry.id, allLocales: items }))} 
+							style={{ cursor: "pointer" }}
+						/>
 					</Cell>
 				</Grid>
 			</ListEntryCard>

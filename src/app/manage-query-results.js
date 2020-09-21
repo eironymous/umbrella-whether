@@ -9,7 +9,7 @@ export const parseResults = (results) => {
 	const utc = results.location.utc_offset.charAt(0).localeCompare("-") !== 0 ? "+".concat(results.location.utc_offset) : results.location.utc_offset;
 	
 	return getWeatherItem(
-		uniqueId(),
+		uniqueId(`${results.location.name}.`),
 		false,
 		results.location.name,
 		results.location.country,

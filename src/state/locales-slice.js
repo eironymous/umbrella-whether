@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { findIndex } from "lodash";
-import { mergeLists, sortLocaleList, getLocaleById } from "../app/locale-list-tools";
+import { mergeLists, sortLocaleList, getLocaleById , getLocaleByCity } from "../app/locale-list-tools";
 
 export const localesSlice = createSlice({
 	name: "locales",
@@ -16,9 +16,13 @@ export const localesSlice = createSlice({
 		//Merge a list of locales with the extant list
 		mergeLocales: (state, {payload}) => {
 			const allLocales = [...state.locales];
-			const merged = mergeLists(allLocales, payload, true);
-			const sorted = sortLocaleList(merged);
-			state.locales = sorted;
+			if (allLocales.length === 0) {
+				state.locales = [payload];
+			} else {
+				const merged = mergeLists(allLocales, payload, true);
+				const sorted = sortLocaleList(merged);
+				state.locales = sorted;
+			}
 		},
 		//Set favorite
 		setFavorite: (state, {payload}) => {
@@ -36,13 +40,26 @@ export const localesSlice = createSlice({
 
 				state.locales = sorted;
 			}
+		},
+		//Delete by id
+		deleteById: (state, {payload}) => {
+			const allLocales = payload.allLocales;
+
+			//Find the index of the locale in question
+			const idx = findIndex(allLocales, (item) => item.id === payload.id);
+
+			if (idx !== -1) {
+				const newList = allLocales.filter((item) => item.id !== payload.id);
+				state.locales = newList;
+			}
 		}
 	}
 });
 
-export const { setLocales, mergeLocales, setFavorite } = localesSlice.actions;
+export const { setLocales, mergeLocales, setFavorite, deleteById } = localesSlice.actions;
 
 export const selectLocales = state => state.locales;
 export const selectLocaleById = (state, id) => getLocaleById(state.locales.locales, id);
+export const selectLocaleByCity = (state, city) => getLocaleByCity(state.locales.locales, city);
 
 export default localesSlice.reducer;

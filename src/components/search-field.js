@@ -35,6 +35,7 @@ const SearchButton = styled.div`
 	padding: 0.25em;
 	padding-right: .5em;
 	background-color: rgba(255, 255, 255, 0.1);
+	cursor: pointer;
 
 	.search-icon {
 		top: 50%;
@@ -45,7 +46,6 @@ const SearchButton = styled.div`
 
 export default ({
 	onSubmit,
-	onCancel,
 }) => {
 	const [ text, setText ] = React.useState("");
 
@@ -56,7 +56,7 @@ export default ({
 	const handleKeyUp = ({ key }) => {
 		if (key === "Enter") {
 			console.log(text);
-			//onSubmit(text);
+		 	onSubmit(text);
 		}
 	}
 
@@ -67,11 +67,12 @@ export default ({
 					placeholder="New York, New York"
 					onInput={handleInput}
 					onKeyUp={handleKeyUp}
+					onSubmit={() => onSubmit(text)}
 				/>
 			</Cell>
 			<Cell col="2">
 				<SearchButton>
-					<Icon icon="search" className="search-icon" />
+					<Icon icon="search" className="search-icon" onClick={() => onSubmit(text)} />
 				</SearchButton>
 			</Cell>
 		</InputContainer>
