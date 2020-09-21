@@ -62,6 +62,8 @@ export const mergeLists = (oldList, newList, omitFavorites = false) => {
 				updatedEntry.feelsLike = newList[idx].feelsLike;
 				updatedEntry.uvIndex = newList[idx].uvIndex;
 				updatedEntry.visibility = newList[idx].visibility;
+				updatedEntry.lat = newList[idx].lat;
+				updatedEntry.long = newList[idx].long;
 
 				//Add the updated entry to the output array
 				output.push(updatedEntry);

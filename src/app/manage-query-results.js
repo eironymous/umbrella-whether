@@ -28,6 +28,8 @@ export const parseResults = (results) => {
 		results.current.cloudcover,
 		results.current.feelslike,
 		results.current.uv_index,
-		results.current.visibility
+		results.current.visibility,
+		results.location.lat,
+		results.location.lon
 	);
 }

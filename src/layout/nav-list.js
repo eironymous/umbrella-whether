@@ -123,7 +123,7 @@ export default ({
 	return (
 		<Nav
 			columns="1fr"
-			rows="10vh 2em 2em 2em 2em"
+			rows="60px 2em 2em 2em 2em"
 			width={width}
 		>
 			<Tooltip

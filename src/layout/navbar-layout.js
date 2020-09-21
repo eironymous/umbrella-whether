@@ -7,6 +7,7 @@ import Header from "./header";
 const NavbarLayout = styled.div`
 	position: relative;
 	height: 100%;
+	min-height: 600px;
 	display: flex;
 `;
 
@@ -19,17 +20,20 @@ const NavCell = styled.div`
 	background-color: #4A4E69;
 	user-select: none;
 	z-index: 10;
+	min-height: 600px;
 `;
 
 const Body = styled.div`
 	transition-property: width;
 	transition-duration: 0.5s;
 	width: ${p => p.navWidth ? `calc(100% - ${p.navWidth})` : "100%"};
+	overflow: visible;
 `;
 
 const BodyContents = styled(Grid)`
 	transition-property: width;
 	transition-duration: 0.5s;
+	overflow: auto;
 	width: 100%;
 	height: 100%;
 `;

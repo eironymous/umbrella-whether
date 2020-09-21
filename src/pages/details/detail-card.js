@@ -11,9 +11,8 @@ const Parent = styled(Grid)`
 	padding: 2em;
 	position: relative;
 	min-width: 700px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+	overflow: visible;
+	min-height: 60vh;
 `;
 
 const StyledCard = styled(Card)`
@@ -98,7 +97,7 @@ const DetailsCard = ({
 						<Cell row="2" col="1/span 3">
 							<Divider />
 						</Cell>
-						<Cell row="3">
+						<Cell row="3" col="1/span 3">
 							<NotesContainer locale={locale} />
 						</Cell>
 					</Grid>

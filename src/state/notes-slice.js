@@ -5,8 +5,9 @@ import { mergeNoteLists, sortById, getNoteById, getNotesByLocale } from "../app/
 /**
  * A note should consist of:
  * 	- id: an unique ID
- * 	- body: a body consisting of a text of maximum 600 characters
+ * 	- body: a body consisting of a text of maximum 460 characters
  * 	- localeId: the id of an associated locale
+ * 	- timeStamp: the time and date of submission or latest edit
  */
 export const notesSlice = createSlice({
 	name: "notes",
@@ -16,12 +17,13 @@ export const notesSlice = createSlice({
 	reducers: {
 		//Overwrite the full list of notes
 		setNotes: (state, {payload}) => {
-			const sorted = sortById(payload);
+			const sorted = payload.length ? sortById(payload) : payload;
 			state.notes = sorted;
 		},
 		//Merge one list with that already in state
 		mergeNotes: (state, {payload}) => {
-			const allNotes = [...state.notes.notes];
+			const allNotes = [...state.notes];
+
 			if (allNotes.length === 0) {
 				state.notes = payload;
 			} else {
@@ -32,7 +34,7 @@ export const notesSlice = createSlice({
 		},
 		//Delete the note with the given id
 		deleteById: (state, {payload}) => {
-			const allNotes = [...state.notes.notes];
+			const allNotes = [...state.notes];
 
 			const idx = findIndex(allNotes, (item) => item.id === payload);
 
@@ -43,8 +45,8 @@ export const notesSlice = createSlice({
 		},
 		//Delete the notes associated with the given locale
 		deleteByLocale: (state, {payload}) => {
-			const allNotes = [...state.notes.notes];
-			
+			const allNotes = [...state.notes];
+
 			const newList = allNotes.filter((item) => item.localeId.localeCompare(payload) !== 0);
 
 			state.notes = newList;

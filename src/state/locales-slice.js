@@ -10,7 +10,7 @@ export const localesSlice = createSlice({
 	reducers: {
 		//Overwrite the list of locales
 		setLocales: (state, {payload}) => {
-			const sorted = sortLocaleList(payload);
+			const sorted = payload.length ? sortLocaleList(payload) : payload;
 			state.locales = sorted;
 		},
 		//Merge a list of locales with the extant list

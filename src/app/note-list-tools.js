@@ -33,6 +33,8 @@ export const mergeNoteLists = (oldList, newList) => {
 	//Initialize variable to store ids of any notes with updated values
 	const copiedNotes = [];
 
+	console.log(oldDistinct, newDistinct);
+
 	if (!isEmpty(oldDistinct)) {
 		oldDistinct.forEach((entry) => {
 			const idx = findIndex(newDistinct, o => 
@@ -46,6 +48,8 @@ export const mergeNoteLists = (oldList, newList) => {
 			} else {
 				//Else copy all values to new object and update where relevant
 				const updated = {...entry};
+				updated.body = newDistinct[idx].body;
+				updated.timeStamp = newDistinct[idx].timeStamp;
 
 				output.push(updated);
 				copiedNotes.push(entry.id);

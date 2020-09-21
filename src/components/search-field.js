@@ -46,6 +46,7 @@ const SearchButton = styled.div`
 
 export default ({
 	onSubmit,
+	searchRef,
 }) => {
 	const [ text, setText ] = React.useState("");
 
@@ -55,8 +56,9 @@ export default ({
 
 	const handleKeyUp = ({ key }) => {
 		if (key === "Enter") {
-			console.log(text);
-		 	onSubmit(text);
+			if (text.length !== 0) {
+				onSubmit(text);
+			}
 		}
 	}
 
@@ -68,6 +70,7 @@ export default ({
 					onInput={handleInput}
 					onKeyUp={handleKeyUp}
 					onSubmit={() => onSubmit(text)}
+					ref={searchRef}
 				/>
 			</Cell>
 			<Cell col="2">

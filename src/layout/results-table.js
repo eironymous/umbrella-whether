@@ -75,7 +75,7 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 		//Delete the entry...
 		dispatch(deleteById({ id: entry.id, allLocales: items }));
 		//...and any associated notes
-		dispatch((state) => deleteByLocale(state, entry.id));
+		dispatch(deleteByLocale(entry.id));
 	};
 
 	const showHeartTooltip = (evt) => {

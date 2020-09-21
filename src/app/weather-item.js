@@ -26,6 +26,8 @@
  * @param {String} feelsLike - The perceived temperature at time of observation, in selected scale
  * @param {String} uvIndex - The UV index rating at time of observation
  * @param {String} visibility - The visibility distance at time of observation, in selected scale
+ * @param {String} lat - The latitude of the locale
+ * @param {String} long - The longitude of the locale
  */
 const getWeatherItem = (
 	id,
@@ -48,6 +50,8 @@ const getWeatherItem = (
 	feelsLike,
 	uvIndex,
 	visibility,
+	lat,
+	long,
 ) => ({
 	id,
 	favorited,
@@ -68,7 +72,9 @@ const getWeatherItem = (
 	cloudCover,
 	feelsLike,
 	uvIndex,
-	visibility
+	visibility,
+	lat,
+	long
 });
 
 export { getWeatherItem };

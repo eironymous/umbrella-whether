@@ -3,10 +3,11 @@ import { Offline, Online } from "react-detect-offline";
 import Layout from "../../layout/navbar-layout";
 import Table from "./home-body";
 import { parseResults } from "../../app/manage-query-results";
-import { fetchList } from "../../app/fetch-weather-for-locale";
+import { fetchList, fetchUpdates } from "../../app/fetch-weather-for-locale";
 import { setLocales, mergeLocales, selectLocales } from "../../state/locales-slice";
+import { setNotes } from "../../state/notes-slice";
+import { selectFirstVisit, selectUnits, setFirstVisit } from "../../state/app-settings-slice";
 import { useDispatch, useSelector } from "react-redux";
-import { getWeatherItem } from "../../app/weather-item";
 import EmptyState from "./empty-state";
 
 const defaultQueries = [
@@ -22,57 +23,50 @@ const defaultQueries = [
 	"Mumbai",
 	"New York",
 	"Osaka",
-	"Sao Paolo",
+	"Sao Paulo",
 	"Shanghai",
 	"Tokyo"
 ];
-
-const testWeatherItem = getWeatherItem(
-	1,
-	false,
-	"New York",
-	"United States of America",
-	"2019-09-07 08:14",
-	"12:14 PM",
-	13,
-	"m",
-	"https://assets.weatherstack.com/images/wsymbols01_png_64/wsymbol_0001_sunny.png",
-	["Sunny"],
-	0,
-	"N",
-	0,
-	0,
-	90,
-	0,
-	13,
-	4,
-	16
-);
 
 const Body = () => {
 	const dispatch = useDispatch();
 	const [ loaded, setLoaded ] = React.useState(false);
 
 	const storedLocales = useSelector(selectLocales);
+	const firstVisit = useSelector(selectFirstVisit);
+	const units = useSelector(selectUnits);
 
 	React.useEffect(() => {
 		const getWeatherList = async () => {
-			const result = await fetchList(defaultQueries);
+			let result = [];
+
+			//If first visit, use default query list, else update existing list
+			if (firstVisit) {
+				result = await fetchList(defaultQueries, units);
+				dispatch(setFirstVisit(false));
+			} else if (!firstVisit && storedLocales.locales.length) {
+				result = await fetchUpdates(storedLocales.locales, units);
+			}
 
 			//Generate and populate list of fresh results
 			const newList = [];
-			result.forEach((res) => newList.push(parseResults(res)));
+
+			if (result.length) {
+				result.forEach((res) => newList.push(parseResults(res)));
+			}
 
 			if (storedLocales.locales.length) {
 				dispatch(mergeLocales(newList));
 			} else {
 				dispatch(setLocales(newList));
+				//Clear out notes, just in case
+				dispatch(setNotes([]));
 			}
 
 			setLoaded(true);
 		}
 
-		//getWeatherList();
+		getWeatherList();
 		setLoaded(true);
 		
 	}, [storedLocales.locales.length, dispatch]);
