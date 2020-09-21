@@ -117,6 +117,12 @@ export default ({
 
 	//Prevents tooltip from lingering when position of trigger element changes
 	React.useEffect(() => {
+		const hideTooltip = () => {
+			setTooltip({
+				show: false
+			});
+		};
+
 		hideTooltip();
 	}, [navOpen]);
 

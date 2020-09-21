@@ -69,7 +69,7 @@ const Body = () => {
 		getWeatherList();
 		setLoaded(true);
 		
-	}, [storedLocales.locales.length, dispatch]);
+	}, [storedLocales.locales, dispatch, firstVisit, units]);
 
 	if (storedLocales.locales === undefined || storedLocales.locales.length === 0) {
 		return <EmptyState />
