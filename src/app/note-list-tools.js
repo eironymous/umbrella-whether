@@ -55,7 +55,134 @@ export const mergeNoteLists = (oldList, newList) => {
 
 	//Remove any ids already copied to output array from newDistinct
 	pullAllWith(newDistinct, copiedNotes, (a, b) => isEqual(a.id, b));
-	const concatenated = concat(output, newDifference);
+	const concatenated = concat(output, newDistinct);
 
 	return concatenated;
+}
+
+/**
+ * Sorts the given list in ascending order by id field
+ * @param {[]} list 
+ */
+export const sortById = (list) => {
+	return sortListById(list);
+}
+
+/**
+ * Retrieves a single note from a list based on the note's id
+ * @param {[]} list 
+ * @param {String} id 
+ */
+export const getNoteById = (list, id) => {
+	if (!isArray(list)) {
+		throw TypeError("First parameter must be an array.");
+	}
+
+	for (let i = 0; i < list.length; i++) {
+		if (list[i].id.localeCompare(id) === 0) {
+			return list[i];
+		}
+	}
+
+	return undefined;
+}
+
+/**
+ * Selects any notes associated with the given locale id from a list.
+ * @param {[]} list 
+ * @param {String} id 
+ */
+export const getNotesByLocale = (list, id) => {
+	if (!isArray(list)) {
+		throw TypeError("First parameter must be an array.");
+	}
+
+	//Copy the input list
+	const output = [...list];
+
+	//Remove all entries that don't match the given id
+	pullAllWith(output, id, (o) => o.localeId.localeCompare(id) !== 0)
+
+	return output;
+}
+
+/// HELPER FUNCTIONS ///
+
+/**
+ * Selects a pivot at the rough halfway point of a list and partitions that list,
+ * plus swaps relevant elements.
+ * @param {} list - A list of note items
+ * @param {*} left - The currently-selected left index
+ * @param {*} right - The currently-selected right index
+ */
+const partition = (list, left, right) => {
+	if (!list || !list.length) {
+		throw TypeError("Array parameter must not be empty or undefined.");
+	}
+
+	let pivot = list[Math.floor((right + left) / 2)];
+	let i = left;
+	let j = right;
+
+	while (i <= j) {
+		while (list[i].id.localeCompare(pivot.id) < 0) {
+			i++;
+		}
+		while (list[j].id.localeCompare(pivot.id) > 0) {
+			j--;
+		}
+
+		if (i <= j) {
+			swap(list, i, j);
+			i++;
+			j--;
+		}
+	}
+
+	return i;
+}
+
+/**
+ * Swaps two elements in a list
+ * @param {[]} items - The list of items
+ * @param {integer} left - The index of the first element
+ * @param {integer} right - The index of the second element
+ */
+const swap = (items, left, right) => {
+	let temp = items[left];
+	items[left] = items[right];
+	items[right] = temp;
+}
+
+/**
+ * Quicksort list by the id value.
+ * @param {[]} items - The list of note items
+ * @param {integer} left - The starting leftmost index
+ * @param {integer} right - The starting rightmost index
+ */
+const sortListById = (items, left, right) => {
+	if (!items || !items.length) {
+		throw TypeError("Array parameter must not be empty or undefined.");
+	}
+
+	let idx = undefined;
+
+	if (items.length > 1) {
+		idx = partition(items, left, right);
+
+		//If there are more elements on the left,
+		if (left < idx - 1) {
+			//Select that segment
+			sortListById(items, left, idx - 1);
+		}
+
+		//Else if there are more elements on the right,
+		if (idx < right) {
+			//Use that segment
+			sortListById(items, idx, right);
+		}
+	}
+
+	//If only one item is in the list, return the list as-is
+	return items;
 }

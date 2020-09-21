@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import routerReducer from "./router-slice";
 import localesReducer from "./locales-slice";
+import notesReducer from "./notes-slice";
 import { throttle } from "lodash";
 import { saveState, loadState } from "./persistence/save-load";
 
@@ -8,6 +9,7 @@ const store =  configureStore({
 	reducer: {
 		router: routerReducer,
 		locales: localesReducer,
+		notes: notesReducer,
 	},
 	preloadedState: loadState()
 });

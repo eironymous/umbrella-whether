@@ -5,6 +5,7 @@ import { FontAwesomeIcon as Icon } from "@fortawesome/react-fontawesome";
 import { updateRoute } from "../state/router-slice";
 import { useDispatch } from "react-redux";
 import { noop } from "lodash";
+import Tooltip from "../components/tooltip";
 
 const Nav = styled(Grid)`
 	grid-gap: 0;
@@ -93,6 +94,31 @@ export default ({
 	width,
 }) => {
 	const dispatch = useDispatch();
+	const [ tooltip, setTooltip ] = React.useState({
+		show: false,
+		x: 0,
+		y: 0,
+	});
+
+	const showTooltip = (evt) => {
+		setTooltip({
+			show: true,
+			x: evt.target.getBoundingClientRect().right,
+			y: evt.target.getBoundingClientRect().top
+		});
+	};
+
+	const hideTooltip = () => {
+		setTooltip({
+			...tooltip,
+			show: false
+		});
+	};
+
+	//Prevents tooltip from lingering when position of trigger element changes
+	React.useEffect(() => {
+		hideTooltip();
+	}, [navOpen]);
 
 	return (
 		<Nav
@@ -100,7 +126,15 @@ export default ({
 			rows="10vh 2em 2em 2em 2em"
 			width={width}
 		>
-			<HeaderCell onClick={toggleNavWidth}>
+			<Tooltip
+				show={tooltip.show} 
+				x={tooltip.x} 
+				y={tooltip.y} 
+				text={navOpen ? "Collapse" : "Expand"} 
+			/>
+			<HeaderCell
+				onClick={toggleNavWidth}
+			>
 				<Header navOpen={navOpen} width={width}>
 					<Icon 
 						icon="umbrella" 
@@ -110,10 +144,22 @@ export default ({
 						<Logo/>
 					}
 					{navOpen && 
-						<span>{"<"}</span>
+						<span
+							onMouseOver={(evt) => {
+								evt.stopPropagation();
+								showTooltip(evt);
+							}}
+							onMouseOut={hideTooltip}
+						>{"<"}</span>
 					}
 					{!navOpen &&
-						<span>{">"}</span>
+						<span
+							onMouseOver={(evt) => {
+								evt.stopPropagation();
+								showTooltip(evt);
+							}}
+							onMouseOut={hideTooltip}
+						>{">"}</span>
 					}
 				</Header>
 			</HeaderCell>

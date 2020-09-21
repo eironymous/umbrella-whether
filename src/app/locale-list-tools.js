@@ -135,7 +135,7 @@ export const reorderByFavorite = (list) => {
  */
 export const removeById = (list, id) => {
 	if(!isArray(list)) {
-		throw TypeError("Input must be a list.");
+		throw TypeError("First parameter must be an array.");
 	}
 
 	const copy = list.slice();
@@ -145,13 +145,18 @@ export const removeById = (list, id) => {
 	return copy;
 }
 
+/**
+ * Selects the weatherItem associated with a given id
+ * @param {[]} list 
+ * @param {String} id 
+ */
 export const getLocaleById = (list, id) => {
 	if(!isArray(list)) {
-		throw TypeError("First parameter must be a list.");
+		throw TypeError("First parameter must be an array.");
 	}
 
 	for (let i = 0; i < list.length; i++) {
-		if (isEqual(list[i].id, id)) {
+		if (list[i].id.localeCompare(id) === 0) {
 			return list[i];
 		}
 	}
@@ -159,14 +164,18 @@ export const getLocaleById = (list, id) => {
 	return undefined;
 }
 
+/**
+ * Selects a weatherItem associated with a given city name
+ * @param {[]} list 
+ * @param {String} city 
+ */
 export const getLocaleByCity = (list, city) => {
 	if (!isArray(list)) {
-		throw TypeError("First parameter must be a list.");
+		throw TypeError("First parameter must be an array.");
 	}
 
 	for (let i = 0; i < list.length; i++) {
 		if (list[i].city.localeCompare(city) === 0) {
-			console.log(list[i]);
 			return list[i];
 		}
 	}
@@ -185,7 +194,7 @@ export const getLocaleByCity = (list, city) => {
  */
 const partition = (list, left, right) => {
 	if (!list || !list.length) {
-		throw TypeError("List parameter must not be empty.");
+		throw TypeError("Array parameter must not be empty or undefined.");
 	}
 
 	let pivot = list[Math.floor((right + left) / 2)];
@@ -232,27 +241,28 @@ const swap = (items, left, right) => {
 const sortListByCity = (items, left, right) => {
 	if (!items || !items.length) {
 		//Safety error check in case I've beefed something
-		throw TypeError("List parameter cannot be empty");
+		throw TypeError("Array parameter must not be empty or undefined.");
 	}
 
-	let index = undefined;
+	let idx = undefined;
 
 	if (items.length > 1) {
-		index = partition(items, left, right);
+		idx = partition(items, left, right);
 
 		//If there are more elements on the left,
-		if (left < index - 1) {
+		if (left < idx - 1) {
 			//Select that segment
-			sortListByCity(items, left, index - 1);
+			sortListByCity(items, left, idx - 1);
 		}
 
 		//Otherwise if there are more elements on the right,
-		if (index < right) {
+		if (idx < right) {
 			//Use that segment
-			sortListByCity(items, index, right);
+			sortListByCity(items, idx, right);
 		}
 	}
 
+	//If only one item is in the list, return the list as-is
 	return items;
 }
 

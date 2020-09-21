@@ -5,6 +5,7 @@ import Card from "../../layout/card";
 import * as CONSTANTS from "../../app/constants";
 import MainInfoContainer from "./detail-card-elements/main-info-container";
 import DetailedInfoContainer from "./detail-card-elements/detailed-info-container";
+import NotesContainer from "./detail-card-elements/notes/note-container";
 
 const Parent = styled(Grid)`
 	padding: 2em;
@@ -49,6 +50,8 @@ const Divider = styled.hr`
 	left: 50%;
 	transform: translateY(-50%) translateX(-50%);
 	border: 1px solid rgba(255, 255, 255, 0.5);
+	margin: 0;
+	padding: 0;
 `;
 
 const getUnits = (scale) => {
@@ -83,7 +86,7 @@ const DetailsCard = ({
 			<Cell>
 				<StyledCard>
 					<Grid
-						rows="19em .5em 10em"
+						rows="19em 1em 20em"
 						columns="minmax(360px, 510px) minmax(160px, 1fr) minmax(160px, 1fr)"
 					>
 						<Cell>
@@ -94,6 +97,9 @@ const DetailsCard = ({
 						</Cell>
 						<Cell row="2" col="1/span 3">
 							<Divider />
+						</Cell>
+						<Cell row="3">
+							<NotesContainer locale={locale} />
 						</Cell>
 					</Grid>
 				</StyledCard>

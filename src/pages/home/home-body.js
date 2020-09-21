@@ -7,10 +7,7 @@ import { reorderByFavorite } from "../../app/locale-list-tools";
 const Body = styled(Grid)`
 	padding: 2em;
 	position: relative;
-	top: 50%;
-	left: 50%;
-	transform: translateY(-50%) translateX(-50%);
-	min-width: 500px;
+	min-width: 700px;
 `;
 
 const ListCell = styled(Cell)`

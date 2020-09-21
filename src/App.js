@@ -24,6 +24,10 @@ import {
   faBolt,
   faCloudShowersHeavy,
   faSurprise,
+  faStickyNote,
+  faEdit,
+  faEraser,
+  faPaperPlane
 } from "@fortawesome/free-solid-svg-icons";
 import { faEye, faHeart as emptyHeart, faSun } from "@fortawesome/free-regular-svg-icons";
 import { Provider } from "react-redux";
@@ -52,7 +56,11 @@ library.add(
   faCloudRain,
   faBolt,
   faCloudShowersHeavy,
-  faSurprise
+  faSurprise,
+  faStickyNote,
+  faEdit,
+  faEraser,
+  faPaperPlane,
 );
 
 const AppWrapper = () => {

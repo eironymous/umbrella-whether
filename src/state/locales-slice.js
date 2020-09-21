@@ -49,7 +49,7 @@ export const localesSlice = createSlice({
 			const idx = findIndex(allLocales, (item) => item.id === payload.id);
 
 			if (idx !== -1) {
-				const newList = allLocales.filter((item) => item.id !== payload.id);
+				const newList = allLocales.filter((_item, i) => i !== idx);
 				state.locales = newList;
 			}
 		}

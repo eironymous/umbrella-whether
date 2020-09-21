@@ -4,6 +4,7 @@ import { FontAwesomeIcon as Icon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid, Cell } from "../../../layout/grid-items";
 import { setFavorite, selectLocales } from "../../../state/locales-slice";
+import Tooltip from "../../../components/tooltip";
 
 const InfoLabel = styled.div`
 	letter-spacing: 1px;
@@ -19,6 +20,7 @@ const HeartIconContainer = styled.div`
 	position: relative;
 	right: 0;
 	font-size: 2em;
+	cursor: pointer;
 `;
 
 /**
@@ -33,8 +35,35 @@ const DetailedInfoContainer = ({
 	const dispatch = useDispatch();
 	const allLocales = useSelector(selectLocales);
 
+	const [ tooltip, setTooltip ] = React.useState({
+		show: false,
+		x: 0,
+		y: 0,
+	});
+
+	const showTooltip = (evt) => {
+		setTooltip({
+			show: true,
+			x: evt.target.getBoundingClientRect().left,
+			y: evt.target.getBoundingClientRect().top - 20
+		});
+	};
+
+	const hideTooltip = () => {
+		setTooltip({
+			...tooltip,
+			show: false,
+		});
+	};
+
 	return (
 		<Grid columns="6fr 6fr 1fr" rows="repeat(9, min-content)" gridGap="10px">
+			<Tooltip
+				text={locale.favorited ? "Remove favorite" : "Add favorite"}
+				show={tooltip.show}
+				x={tooltip.x}
+				y={tooltip.y}
+			/>
 			<Cell>
 				<InfoLabel>
 					Local Time:
@@ -48,10 +77,20 @@ const DetailedInfoContainer = ({
 			<Cell row="1/span 2" col="3">
 				<HeartIconContainer>
 					{locale.favorited &&
-						<Icon icon="heart" onClick={() => dispatch(setFavorite({ id: locale.id, favorite: false, allLocales: allLocales.locales }))} />
+						<Icon
+							icon="heart" 
+							onClick={() => dispatch(setFavorite({ id: locale.id, favorite: false, allLocales: allLocales.locales }))} 
+							onMouseOver={showTooltip}
+							onMouseOut={hideTooltip}
+						/>
 					}
 					{!locale.favorited &&
-						<Icon icon={["far", "heart"]} onClick={() => dispatch(setFavorite({ id: locale.id, favorite: true, allLocales: allLocales.locales }))} />
+						<Icon 
+							icon={["far", "heart"]} 
+							onClick={() => dispatch(setFavorite({ id: locale.id, favorite: true, allLocales: allLocales.locales }))} 
+							onMouseOver={showTooltip}
+							onMouseOut={hideTooltip}
+						/>
 					}
 				</HeartIconContainer>
 			</Cell>
