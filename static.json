@@ -1,0 +1,6 @@
+{
+	"root": "lib/",
+	"routes": {
+		"/**": "index.html"
+	}
+}
