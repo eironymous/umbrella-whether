@@ -47,7 +47,6 @@ export const mergeLists = (oldList, newList, omitFavorites = false) => {
 				//...omitting favorited field if appropriate
 				updatedEntry.favorited = omitFavorites ? entry.favorited : newList[idx].favorited;
 				updatedEntry.observationTime = newList[idx].observationTime;
-				updatedEntry.utcOffset = newList[idx].utcOffset;
 				updatedEntry.temperature = newList[idx].temperature;
 				updatedEntry.scale = newList[idx].scale;
 				updatedEntry.descriptions = newList[idx].descriptions;

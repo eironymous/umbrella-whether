@@ -11,21 +11,18 @@ test('weatheritem appropriately generated', () => {
 		true,
 		"New York",
 		"United States of America",
-		"2019-09-07 08:14",
 		"12:14 PM",
-		"-4.0",
 		13,
 		"m",
-		"http://www.website.com",
 		["Sunny"],
 		0,
 		"N",
 		0,
 		0,
+		5,
 		90,
 		0,
 		13,
-		4,
 		16
 	);
 

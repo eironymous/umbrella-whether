@@ -85,7 +85,7 @@ const axiosRequest = (locale, scale) => {
 		"https://api.openweathermap.org/data/2.5/weather", { params }
 	).then(
 		//Extract promise
-		(res) => { console.log(res.data.weather); return res.data; }
+		(res) => { return res.data; }
 	).catch(err => {
 		//Throw the error up to presentation
 		console.log(err);
