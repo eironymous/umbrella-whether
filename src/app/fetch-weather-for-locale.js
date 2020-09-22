@@ -3,33 +3,36 @@ import { FAHRENHEIT_SCALE, METRIC_SCALE, SCIENTIFIC_SCALE } from "./constants";
 
 /**
  * Fetches current weather information for the given locale in the given scale
- * @param {String} locale - May be:
- * 		- A single locale - may be a city name, UK/Canada/US ZIP code, or latitude and longitude coordinates.
- * 		- A semicolon-separated set of locales of any of the above types.
+ * @param {String} locale - May be a city name, UK/Canada/US ZIP code, or latitude and longitude coordinates.
  * @param {String} scale - The requested scale - s for scientific, m for metric (default), or f for fahrenheit + imperial
  */
 export const fetchWeather = (locale, scale = METRIC_SCALE) => {
 	//Validate inputs - locale must be defined
 	if (!locale) {
-		throw "Locale cannot be undefined or null.";
+		throw TypeError("Locale cannot be undefined or null.");
 	}
 
 	//Scale must be within three acceptable values defined in constants.js
 	if (!scaleIsValid(scale)) {
-		throw "fetch-weather-for-locale: Invalid scale parameter passed: must be 'm', 's', or 'f'.";
+		throw TypeError("fetch-weather-for-locale: Invalid scale parameter passed: must be 'm', 's', or 'f'.");
 	}
 
 	//Make request, extract data from promise and return
 	return axiosRequest(locale, scale).then(data => data);
 }
 
+/**
+ * Fetches current weather information for a list of locales.
+ * @param {[]} localeList 
+ * @param {String} scale 
+ */
 export const fetchList = (localeList, scale = METRIC_SCALE) => {
 	if (!localeList) {
-		throw "List of locales cannot be undefined or null.";
+		throw TypeError("List of locales cannot be undefined or null.");
 	}
 
 	if (!scaleIsValid(scale)) {
-		throw "Invalid scale parameter passed: must be 'm', 's', or 'f'.";
+		throw TypeError("Invalid scale parameter passed: must be 'm', 's', or 'f'.");
 	}
 
 	const list = [];
@@ -38,7 +41,41 @@ export const fetchList = (localeList, scale = METRIC_SCALE) => {
 		list.push(axiosRequest(locale, scale));
 	});
 
-	console.log(list);
+	return Promise.all(list).then((vals) => vals);
+}
+
+/**
+ * Used specifically to update an extant list of previously-generated locale items.
+ * If city name search returns no result, a repeat search will be performed with coordinates.
+ * @param {[]} locales 
+ * @param {String} scale 
+ */
+export const fetchUpdates = (locales, scale = METRIC_SCALE) => {
+	if (!locales) {
+		throw TypeError("List of locales cannot be undefined or null.");
+	}
+
+	if (!scaleIsValid(scale)) {
+		throw TypeError("Invalid scale parameter passed: must be 'm', 's', or 'f'.");
+	}
+
+	const list = [];
+	const failed = [];
+
+	locales.forEach((locale) => {
+		const result = axiosRequest(locale.city, scale);
+		if (result.success === false) {
+			failed.push(locale);
+		} else {
+			list.push(result);
+		}
+	});
+
+	if (failed.length) {
+		failed.forEach((locale) => {
+			list.push(axiosRequest(`${locale.lat},${locale.long}`, scale));
+		});
+	}
 
 	return Promise.all(list).then((vals) => vals);
 }
@@ -48,7 +85,7 @@ const axiosRequest = (locale, scale) => {
 	const params = {
 		access_key: process.env.REACT_APP_WEATHERSTACK_API_KEY,
 		query: locale,
-		scale: scale
+		units: scale
 	}
 
 	return axios.get(

@@ -26,3 +26,30 @@
 export const METRIC_SCALE = "m";
 export const FAHRENHEIT_SCALE = "f";
 export const SCIENTIFIC_SCALE = "s";
+
+export const METRIC_UNITS = {
+	temperature: "°C",
+	windSpeed: "km/h",
+	visibility: "km",
+	precip: "mm",
+	totalSnow: "cm",
+	pressure: "millibars",
+};
+
+export const FAHRENHEIT_UNITS = {
+	temperature: "°F",
+	windSpeed: "mph",
+	visibility: "m",
+	precip: "in",
+	totalSnow: "in",
+	pressure: "millibars",
+};
+
+export const SCIENTIFIC_UNITS = {
+	temperature: "°K",
+	windSpeed: "km/h",
+	visibility: "km",
+	precip: "mm",
+	totalSnow: "cm",
+	pressure: "millibars",
+};

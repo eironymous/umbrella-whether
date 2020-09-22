@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { findIndex } from "lodash";
+import { mergeLists, sortLocaleList, getLocaleById , getLocaleByCity } from "../app/locale-list-tools";
 
 export const localesSlice = createSlice({
 	name: "locales",
@@ -6,108 +8,58 @@ export const localesSlice = createSlice({
 		locales: []
 	},
 	reducers: {
-		//Add a new locale
-		addLocale: (state, {payload}) => {
-			const list = state.locales;
-			list.push(payload);
-			//Sort to ensure locations appear in alphabetical order
-			const sorted = sortListByCity(list, 0, list.length - 1);
+		//Overwrite the list of locales
+		setLocales: (state, {payload}) => {
+			const sorted = payload.length ? sortLocaleList(payload) : payload;
 			state.locales = sorted;
 		},
-		//Add multiple new locales
-		addLocales: (state, {payload}) => {
-			const list = state.locales;
-			payload.forEach((item) => {
-				list.push(item);
-			});
-			const sorted = sortListByCity(list, 0, list.length - 1);
-			state.locales = sorted;
+		//Merge a list of locales with the extant list
+		mergeLocales: (state, {payload}) => {
+			const allLocales = [...state.locales];
+			if (allLocales.length === 0) {
+				state.locales = [payload];
+			} else {
+				const merged = mergeLists(allLocales, payload, true);
+				const sorted = sortLocaleList(merged);
+				state.locales = sorted;
+			}
+		},
+		//Set favorite
+		setFavorite: (state, {payload}) => {
+			const allLocales = payload.allLocales;
+
+			//Find the index of the locale in question
+			const idx = findIndex(allLocales, (item) => item.id === payload.id);
+			
+			if (idx !== -1) {
+				const item = {...allLocales[idx]};
+				item.favorited = payload.favorite;
+
+				const merged = mergeLists(allLocales, [item]);
+				const sorted = sortLocaleList(merged);
+
+				state.locales = sorted;
+			}
+		},
+		//Delete by id
+		deleteById: (state, {payload}) => {
+			const allLocales = payload.allLocales;
+
+			//Find the index of the locale in question
+			const idx = findIndex(allLocales, (item) => item.id === payload.id);
+
+			if (idx !== -1) {
+				const newList = allLocales.filter((_item, i) => i !== idx);
+				state.locales = newList;
+			}
 		}
 	}
 });
 
-/**
- * Selects a pivot at the rough halfway point of a list and partitions that list,
- * plus swaps relevant elements to sort.
- * @param {[]} list - A list of WeatherItems (see /src/app/weather-item.js). 
- * @param {integer} left - The currently-selected left index
- * @param {integer} right - The currently-selected right index
- */
-const partition = (list, left, right) => {
-	if (!list || !list.length) {
-		throw "Attempting to sort empty list.";
-	}
-
-	let pivot = list[Math.floor((right + left) / 2)],
-	i = left;
-	j = right;
-
-	while (i <= j) {
-		while (items[i].city.localeCompare(pivot.city) <= 0) {
-			i++;
-		}
-		while (items[j].city.localeCompare(pivot.city) >= 0) {
-			j--;
-		}
-
-		if (i <= j) {
-			swap(items, i, j);
-			i++;
-			j--;
-		}
-	}
-
-	return i;
-}
-
-/**
- * Swaps two elements in a list
- * @param {[]} items - A list of items 
- * @param {integer} left - The index of the first element 
- * @param {integer} right - The index of the second element
- */
-const swap = (items, left, right) => {
-	let temp = items[left];
-	items[left] = items[right];
-	items[right] = temp;
-}
-
-/**
- * Quicksort list by the name of the city, returns
- * the list in increasing alphabetical order.
- * @param {[]} items - A list of WeatherItems (see /src/app/weather-item.js) -- either the full list or a subset
- * @param {integer} left - The starting leftmost index
- * @param {integer} right - The starting rightmost index
- */
-const sortListByCity = (items, left, right) => {
-	if (!items || !items.length) {
-		//Safety error check in case I've beefed something
-		throw "locales-slice.js: Attempting to sort empty or undefined list.";
-	}
-
-	let index = undefined;
-
-	if(items.length > 1) {
-		index = partition(items, left, right);
-
-		//If there are more elements on the left,
-		if (left < index - 1) {
-			//Select that segment
-			sortListByCity(items, left, index - 1);
-		}
-
-		//Otherwise if there are more elements on the right,
-		if (index < right) {
-			//Use that segment
-			sortListByCity(items, index, right);
-		}
-	}
-
-	return items;
-}
-
-export const { addLocale, addLocales } = localesSlice.actions;
+export const { setLocales, mergeLocales, setFavorite, deleteById } = localesSlice.actions;
 
 export const selectLocales = state => state.locales;
+export const selectLocaleById = (state, id) => getLocaleById(state.locales.locales, id);
+export const selectLocaleByCity = (state, city) => getLocaleByCity(state.locales.locales, city);
 
 export default localesSlice.reducer;
