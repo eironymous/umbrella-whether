@@ -89,7 +89,7 @@ const axiosRequest = (locale, scale) => {
 	}
 
 	return axios.get(
-		"http://api.weatherstack.com/current", { params }
+		"https://api.weatherstack.com/current", { params }
 	).then(
 		//Extract promise
 		(res) => { return res.data; }
