@@ -6,7 +6,7 @@ import { parseResults } from "../../app/manage-query-results";
 import { fetchList, fetchUpdates } from "../../app/fetch-weather-for-locale";
 import { setLocales, mergeLocales, selectLocales } from "../../state/locales-slice";
 import { setNotes } from "../../state/notes-slice";
-import { selectFirstVisit, selectUnits, setFirstVisit } from "../../state/app-settings-slice";
+import { selectFirstVisit, selectUnits, setUnits, setFirstVisit } from "../../state/app-settings-slice";
 import { useDispatch, useSelector } from "react-redux";
 import EmptyState from "./empty-state";
 
@@ -41,22 +41,26 @@ const Body = () => {
 			let result = [];
 
 			//If first visit, use default query list, else update existing list
-			if (firstVisit) {
-				result = await fetchList(defaultQueries, units);
-				dispatch(setFirstVisit(false));
-			} else if (!firstVisit && storedLocales.locales.length) {
-				result = await fetchUpdates(storedLocales.locales, units);
+			try {
+				if (firstVisit) {
+					result = await fetchList(defaultQueries, units);
+					dispatch(setFirstVisit(false));
+				} else if (!firstVisit && storedLocales.locales.length) {
+					result = await fetchUpdates(storedLocales.locales, units);
+				}
+			} catch (error) {
+				console.log(error);
 			}
 
 			//Generate and populate list of fresh results
 			const newList = [];
 
 			if (result.length) {
-				result.forEach((res) => newList.push(parseResults(res)));
+				result.forEach((res) => newList.push(parseResults(res, units)));
 			}
 
 			if (storedLocales.locales.length) {
-				dispatch(mergeLocales(newList));
+				dispatch(setLocales(newList));
 			} else {
 				dispatch(setLocales(newList));
 				//Clear out notes, just in case
@@ -67,9 +71,8 @@ const Body = () => {
 		}
 
 		getWeatherList();
-		setLoaded(true);
 		
-	}, [storedLocales.locales, dispatch, firstVisit, units]);
+	}, []);
 
 	if (storedLocales.locales === undefined || storedLocales.locales.length === 0) {
 		return <EmptyState />

@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon as Icon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
+import { get } from "lodash";
 import { Grid, Cell } from "../../../layout/grid-items";
 import { setFavorite, selectLocales } from "../../../state/locales-slice";
 import Tooltip from "../../../components/tooltip";
@@ -66,7 +67,7 @@ const DetailedInfoContainer = ({
 			/>
 			<Cell>
 				<InfoLabel>
-					Local Time:
+					Observation Time:
 				</InfoLabel>
 			</Cell>
 			<Cell col="2">
@@ -128,22 +129,22 @@ const DetailedInfoContainer = ({
 			</Cell>
 			<Cell row="5">
 				<InfoLabel>
-					Precipitation:
+					Rain:
 				</InfoLabel>
 			</Cell>
 			<Cell row="5" col="2">
 				<InfoText>
-					{`${locale.precipitation || 0} ${units.precip}`}
+					{`${get(locale.rain, "1h", undefined) || get(locale.rain, "3h", 0)} ${units.precip}`}
 				</InfoText>
 			</Cell>
 			<Cell row="6">
 				<InfoLabel>
-					Humidity:
+					Snow:
 				</InfoLabel>
 			</Cell>
 			<Cell row="6" col="2">
 				<InfoText>
-					{`${locale.humidity || 0}%`}
+					{`${get(locale.snow, "1h", undefined) || get(locale.snow, "3h", 0)} ${units.totalSnow}`}
 				</InfoText>
 			</Cell>
 			<Cell row="7">
@@ -158,12 +159,12 @@ const DetailedInfoContainer = ({
 			</Cell>
 			<Cell row="8">
 				<InfoLabel>
-					UV Index:
+					Humidity:
 				</InfoLabel>
 			</Cell>
 			<Cell row="8" col="2">
 				<InfoText>
-					{locale.uvIndex || 0}
+					{`${locale.humidity || 0}%`}
 				</InfoText>
 			</Cell>
 			<Cell row="9">

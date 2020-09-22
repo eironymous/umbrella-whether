@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Grid, Cell } from "../../layout/grid-items";
+import { DateTime } from "luxon";
 import Card from "../../layout/card";
 import * as CONSTANTS from "../../app/constants";
 import MainInfoContainer from "./detail-card-elements/main-info-container";
@@ -75,7 +76,6 @@ const getUnits = (scale) => {
 const DetailsCard = ({
 	locale
 }) => {
-	const time = locale.localTime.split(" ")[1];
 	const units = getUnits(locale.scale);
 
 	if (locale === undefined) return null;
@@ -89,10 +89,10 @@ const DetailsCard = ({
 						columns="minmax(360px, 510px) minmax(160px, 1fr) minmax(160px, 1fr)"
 					>
 						<Cell>
-							<MainInfoContainer locale={locale} time={time} units={units} />
+							<MainInfoContainer locale={locale} time={locale.observationTime} units={units} />
 						</Cell>
 						<Cell col="2/span 2">
-							<DetailedInfoContainer locale={locale} units={units} time={time} />
+							<DetailedInfoContainer locale={locale} units={units} time={locale.observationTime} />
 						</Cell>
 						<Cell row="2" col="1/span 3">
 							<Divider />

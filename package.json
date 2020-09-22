@@ -12,9 +12,11 @@
     "axios": "^0.20.0",
     "cra-template": "1.0.3",
     "lodash": "^4.17.20",
+    "luxon": "^1.25.0",
     "react": "^16.13.1",
     "react-detect-offline": "^2.4.0",
     "react-dom": "^16.13.1",
+    "react-is": "^16.13.1",
     "react-redux": "^7.2.1",
     "react-scripts": "3.4.3",
     "redux": "^4.0.5",
@@ -50,7 +52,6 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^8.1.0",
     "babel-plugin-styled-components": "^1.11.1",
-    "babel-preset-react": "^6.24.1",
-    "jest-dom": "^4.0.0"
+    "babel-preset-react": "^6.24.1"
   }
 }

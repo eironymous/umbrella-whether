@@ -162,7 +162,7 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 							<span onMouseOver={showEyeTooltip} onMouseOut={hideAllTooltips}>{`${entry.city} - ${entry.country}`}</span>
 					</CityCell>
 					<TempCell col="3">
-							<strong>{`${entry.temperature} °${units}`}</strong> {`at`} <strong>{time}</strong> {`UTC ${entry.utcOffset}`}
+							<strong>{`${entry.temperature} °${units}`}</strong> {`at`} <strong>{entry.observationTime}</strong>
 					</TempCell>
 					<CityCell col="4">
 						{entry.favorited &&

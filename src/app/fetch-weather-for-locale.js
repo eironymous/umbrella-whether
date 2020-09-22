@@ -60,22 +60,13 @@ export const fetchUpdates = (locales, scale = METRIC_SCALE) => {
 	}
 
 	const list = [];
-	const failed = [];
 
 	locales.forEach((locale) => {
 		const result = axiosRequest(locale.city, scale);
-		if (result.success === false) {
-			failed.push(locale);
-		} else {
+		if (result.success !== false) {
 			list.push(result);
 		}
 	});
-
-	if (failed.length) {
-		failed.forEach((locale) => {
-			list.push(axiosRequest(`${locale.lat},${locale.long}`, scale));
-		});
-	}
 
 	return Promise.all(list).then((vals) => vals);
 }
@@ -83,19 +74,21 @@ export const fetchUpdates = (locales, scale = METRIC_SCALE) => {
 //Performs axios request
 const axiosRequest = (locale, scale) => {
 	const params = {
-		access_key: process.env.REACT_APP_WEATHERSTACK_API_KEY,
-		query: locale,
+		appid: process.env.REACT_APP_OPENWEATHER_API_KEY,
+		q: locale,
 		units: scale
 	}
 
+	console.log("requesting!");
+
 	return axios.get(
-		"https://api.weatherstack.com/current", { params }
+		"https://api.openweathermap.org/data/2.5/weather", { params }
 	).then(
 		//Extract promise
-		(res) => { return res.data; }
+		(res) => { console.log(res.data.weather); return res.data; }
 	).catch(err => {
 		//Throw the error up to presentation
-		throw err;
+		console.log(err);
 	});
 }
 

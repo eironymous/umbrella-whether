@@ -95,7 +95,7 @@ export default () => {
 				const parsed = [];
 
 				newList.forEach((result) => {
-					parsed.push(parseResults(result));
+					parsed.push(parseResults(result, CONSTANTS.FAHRENHEIT_SCALE));
 				});
 
 				dispatch(mergeLocales(parsed));
@@ -110,7 +110,7 @@ export default () => {
 				const parsed = [];
 
 				newList.forEach((result) => {
-					parsed.push(parseResults(result));
+					parsed.push(parseResults(result, CONSTANTS.METRIC_SCALE));
 				});
 
 				dispatch(mergeLocales(parsed));
@@ -121,7 +121,7 @@ export default () => {
 	const handleSubmit = async (val) => {
 		const getWeather = async () => {
 			const result = await fetchWeather(val);
-			return parseResults(result);
+			return parseResults(result, scale);
 		}
 		
 		const response = await getWeather(val);

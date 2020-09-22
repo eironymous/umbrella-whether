@@ -46,24 +46,20 @@ export const mergeLists = (oldList, newList, omitFavorites = false) => {
 				updatedEntry.country = newList[idx].country;
 				//...omitting favorited field if appropriate
 				updatedEntry.favorited = omitFavorites ? entry.favorited : newList[idx].favorited;
-				updatedEntry.localTime = newList[idx].localTime;
 				updatedEntry.observationTime = newList[idx].observationTime;
 				updatedEntry.utcOffset = newList[idx].utcOffset;
 				updatedEntry.temperature = newList[idx].temperature;
 				updatedEntry.scale = newList[idx].scale;
-				updatedEntry.iconUrl = newList[idx].iconUrl;
 				updatedEntry.descriptions = newList[idx].descriptions;
 				updatedEntry.windDirection = newList[idx].windDirection;
 				updatedEntry.windSpeed = newList[idx].windSpeed;
 				updatedEntry.pressure = newList[idx].pressure;
-				updatedEntry.precipitation = newList[idx].precipitation;
+				updatedEntry.rain = newList[idx].rain;
+				updatedEntry.snow = newList[idx].snow;
 				updatedEntry.humidity = newList[idx].humidity;
 				updatedEntry.cloudCover = newList[idx].cloudCover;
 				updatedEntry.feelsLike = newList[idx].feelsLike;
-				updatedEntry.uvIndex = newList[idx].uvIndex;
 				updatedEntry.visibility = newList[idx].visibility;
-				updatedEntry.lat = newList[idx].lat;
-				updatedEntry.long = newList[idx].long;
 
 				//Add the updated entry to the output array
 				output.push(updatedEntry);
