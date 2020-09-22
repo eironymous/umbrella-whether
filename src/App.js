@@ -65,6 +65,12 @@ library.add(
   faTrash,
 );
 
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 const AppWrapper = () => {
   //Wrap app in a provider
   return (
