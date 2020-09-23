@@ -33,8 +33,6 @@ export const mergeNoteLists = (oldList, newList) => {
 	//Initialize variable to store ids of any notes with updated values
 	const copiedNotes = [];
 
-	console.log(oldDistinct, newDistinct);
-
 	if (!isEmpty(oldDistinct)) {
 		oldDistinct.forEach((entry) => {
 			const idx = findIndex(newDistinct, o => 
@@ -65,11 +63,11 @@ export const mergeNoteLists = (oldList, newList) => {
 }
 
 /**
- * Sorts the given list in ascending order by id field
+ * Sorts the given list in ascending order by timestamp field
  * @param {[]} list 
  */
-export const sortById = (list) => {
-	return sortListById(list);
+export const sortByDate = (list) => {
+	return sortListByDate(list, 0, list.length - 1);
 }
 
 /**
@@ -94,7 +92,7 @@ export const getNoteById = (list, id) => {
 /**
  * Selects any notes associated with the given locale id from a list.
  * @param {[]} list 
- * @param {String} id 
+ * @param {String} id
  */
 export const getNotesByLocale = (list, id) => {
 	if (!isArray(list)) {
@@ -106,6 +104,11 @@ export const getNotesByLocale = (list, id) => {
 
 	//Remove all entries that don't match the given id
 	pullAllWith(output, id, (o) => o.localeId.localeCompare(id) !== 0)
+
+	if (list.length === output.length) {
+		//No matches were found, return empty list
+		return [];
+	}
 
 	return output;
 }
@@ -129,10 +132,10 @@ const partition = (list, left, right) => {
 	let j = right;
 
 	while (i <= j) {
-		while (list[i].id.localeCompare(pivot.id) < 0) {
+		while (list[i].timeStamp - pivot.timeStamp > 0) {
 			i++;
 		}
-		while (list[j].id.localeCompare(pivot.id) > 0) {
+		while (list[j].timeStamp - pivot.timeStamp < 0) {
 			j--;
 		}
 
@@ -164,7 +167,7 @@ const swap = (items, left, right) => {
  * @param {integer} left - The starting leftmost index
  * @param {integer} right - The starting rightmost index
  */
-const sortListById = (items, left, right) => {
+const sortListByDate = (items, left, right) => {
 	if (!items || !items.length) {
 		throw TypeError("Array parameter must not be empty or undefined.");
 	}
@@ -177,13 +180,13 @@ const sortListById = (items, left, right) => {
 		//If there are more elements on the left,
 		if (left < idx - 1) {
 			//Select that segment
-			sortListById(items, left, idx - 1);
+			sortListByDate(items, left, idx - 1);
 		}
 
 		//Else if there are more elements on the right,
 		if (idx < right) {
 			//Use that segment
-			sortListById(items, idx, right);
+			sortListByDate(items, idx, right);
 		}
 	}
 

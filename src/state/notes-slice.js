@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { findIndex } from "lodash";
-import { mergeNoteLists, sortById, getNoteById, getNotesByLocale } from "../app/note-list-tools";
+import { mergeNoteLists, sortByDate, getNoteById, getNotesByLocale } from "../app/note-list-tools";
 
 /**
  * A note should consist of:
@@ -17,7 +17,7 @@ export const notesSlice = createSlice({
 	reducers: {
 		//Overwrite the full list of notes
 		setNotes: (state, {payload}) => {
-			const sorted = payload.length ? sortById(payload) : payload;
+			const sorted = payload.length ? sortByDate(payload) : payload;
 			state.notes = sorted;
 		},
 		//Merge one list with that already in state
@@ -28,7 +28,7 @@ export const notesSlice = createSlice({
 				state.notes = payload;
 			} else {
 				const merged = mergeNoteLists(allNotes, payload);
-				const sorted = sortById(merged);
+				const sorted = sortByDate(merged);
 				state.notes = sorted;
 			}
 		},

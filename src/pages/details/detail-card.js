@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { Grid, Cell } from "../../layout/grid-items";
-import { DateTime } from "luxon";
 import Card from "../../layout/card";
 import * as CONSTANTS from "../../app/constants";
 import MainInfoContainer from "./detail-card-elements/main-info-container";
