@@ -33,10 +33,10 @@ const StyledCard = styled(Card)`
 
 	::-webkit-scrollbar-thumb {
 		border-radius: 10px;
-		background: #4A4E69;
+		background: #22223B;
 	}
 
-	scrollbar-color: #4A4E69;
+	scrollbar-color: #22223B;
 	scrollbar-width: 4px;
 `;
 
@@ -75,9 +75,10 @@ const getUnits = (scale) => {
 const DetailsCard = ({
 	locale
 }) => {
-	const units = getUnits(locale.scale);
 
 	if (locale === undefined) return null;
+
+	const units = getUnits(locale.scale);
 
 	return (
 		<Parent>

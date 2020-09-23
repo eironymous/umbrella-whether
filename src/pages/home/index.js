@@ -3,9 +3,10 @@ import { Offline, Online } from "react-detect-offline";
 import Layout from "../../layout/navbar-layout";
 import Table from "./home-body";
 import { parseResults } from "../../app/manage-query-results";
-import { fetchList, fetchUpdates } from "../../app/fetch-weather-for-locale";
-import { setLocales, mergeLocales, selectLocales } from "../../state/locales-slice";
+import { fetchList, fetchUpdates, getWeatherByCoordinates } from "../../app/fetch-weather-for-locale";
+import { setLocales, mergeLocales, selectLocales, selectLocaleByCity } from "../../state/locales-slice";
 import { setNotes } from "../../state/notes-slice";
+import { updateRoute } from "../../state/router-slice";
 import { selectFirstVisit, selectUnits, setUnits, setFirstVisit } from "../../state/app-settings-slice";
 import { useDispatch, useSelector } from "react-redux";
 import EmptyState from "./empty-state";
@@ -28,17 +29,76 @@ const defaultQueries = [
 	"Tokyo"
 ];
 
+
+
 const Body = () => {
 	const dispatch = useDispatch();
 	const [ loaded, setLoaded ] = React.useState(false);
+	const [ geolocation, setGeolocation ] = React.useState(undefined);
 
 	const storedLocales = useSelector(selectLocales);
 	const firstVisit = useSelector(selectFirstVisit);
 	const units = useSelector(selectUnits);
 
+	const queryPermissions = () => {
+		navigator.permissions.query({ name: "geolocation" }).then((result) => {
+			console.log(result)
+			if (result.state === "granted") {
+				setGeolocation(result.state);
+			} else if (result.state === "prompt") {
+				setGeolocation(result.state);
+			} else {
+				setGeolocation(result.state);
+			}
+
+			result.onchange = () => {
+				setGeolocation(result.state);
+			}
+		})
+	};
+
+	const getWeatherByGeolocation = async (location) => {
+
+		try {
+			const lat = location.coords.latitude;
+			const long = location.coords.longitude;
+
+			const result = await getWeatherByCoordinates(lat, long, units);
+			const parsed = parseResults(result, units);
+			await dispatch(mergeLocales([ parsed ]));
+
+			//If the city already exists in the store, use the extant id for the redirect
+			let match = undefined;
+			
+			for (let i = 0; i < storedLocales.locales.length; i++) {
+				if (storedLocales.locales[i].city.localeCompare(parsed.city) === 0) {
+					match = storedLocales.locales[i];
+				}
+			}
+
+			dispatch(updateRoute(`details-${match !== undefined ? match.id : parsed.id}`));
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	React.useEffect(() => {
+		if (firstVisit && geolocation !== undefined) {
+			if (geolocation === "granted") {
+				navigator.geolocation.getCurrentPosition(getWeatherByGeolocation, (error) => console.log(error));
+			} else if (geolocation === "prompt") {
+				navigator.geolocation.getCurrentPosition(getWeatherByGeolocation, (error) => console.log(error));
+			}
+		}
+	}, [geolocation]);
+
 	React.useEffect(() => {
 		const getWeatherList = async () => {
 			let result = [];
+
+			if (firstVisit) {
+				queryPermissions();
+			}
 
 			//If first visit, use default query list, else update existing list
 			try {
@@ -60,7 +120,8 @@ const Body = () => {
 			}
 
 			if (storedLocales.locales.length) {
-				dispatch(setLocales(newList));
+				//Merge the new results with the existing ones
+				dispatch(mergeLocales(newList));
 			} else {
 				dispatch(setLocales(newList));
 				//Clear out notes, just in case

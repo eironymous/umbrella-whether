@@ -10,6 +10,8 @@ export const routerSlice = createSlice({
 		allRoutes: {
 			home: "home",
 			details: "details-",
+			about: "about",
+			help: "help",
 		}
 	},
 	reducers: {

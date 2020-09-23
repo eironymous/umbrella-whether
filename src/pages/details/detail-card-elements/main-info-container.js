@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { get } from "lodash";
 import { Grid, Cell } from "../../../layout/grid-items";
 import { getIconForKeyword } from "../icon-selector";
+import { COUNTRY_CODES } from "../../../app/constants";
 
 const LocationNameText = styled.div`
 	font-weight: 800;
@@ -63,7 +65,7 @@ const MainInfoContainer = ({
 			</Cell>
 			<Cell row="2" col="1/span 2">
 				<LocationNameText>
-					{locale.country}
+					{get(COUNTRY_CODES, locale.country)}
 				</LocationNameText>
 			</Cell>
 			<IconCell row="3/span 2">

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { get } from "lodash";
 import { useDispatch } from "react-redux";
 import { updateRoute } from "../state/router-slice";
 import { deleteByLocale } from "../state/notes-slice";
@@ -7,7 +8,7 @@ import { setFavorite, deleteById } from "../state/locales-slice";
 import { FontAwesomeIcon as Icon } from "@fortawesome/react-fontawesome";
 import { Grid, Cell } from "./grid-items";
 import Card from "./card";
-import { FAHRENHEIT_SCALE, METRIC_SCALE, SCIENTIFIC_SCALE } from "../app/constants";
+import { FAHRENHEIT_SCALE, METRIC_SCALE, SCIENTIFIC_SCALE, COUNTRY_CODES } from "../app/constants";
 import Tooltip from "../components/tooltip";
 
 const ListEntryCard = styled(Card)`
@@ -69,7 +70,6 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 	if (entry === undefined) return null;
 
 	const units = getUnits(entry.scale);
-	const time = entry.localTime ? entry.localTime.split(" ")[1] : "Unknown Time";
 
 	const onDeleteEntry = () => {
 		//Delete the entry...
@@ -159,7 +159,7 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 						/>
 					</CityCell>
 					<CityCell col="2" onClick={() => dispatch(updateRoute(`details-${entry.id}`))}>
-							<span onMouseOver={showEyeTooltip} onMouseOut={hideAllTooltips}>{`${entry.city} - ${entry.country}`}</span>
+							<span onMouseOver={showEyeTooltip} onMouseOut={hideAllTooltips}>{`${entry.city} - ${get(COUNTRY_CODES, entry.country)}`}</span>
 					</CityCell>
 					<TempCell col="3">
 							<strong>{`${entry.temperature} °${units}`}</strong> {`at`} <strong>{entry.observationTime}</strong>

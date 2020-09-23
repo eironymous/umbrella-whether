@@ -1,3 +1,5 @@
+import { mergeNoteLists } from "./note-list-tools";
+
 /**
  * Used to define the scale for requests for the weatherstack API. Requests may return values in:
  *   - Metric units:
@@ -300,4 +302,57 @@ export const COUNTRY_CODES = {
 	'YE': 'Yemen',
 	'ZM': 'Zambia',
 	'ZW': 'Zimbabwe'
+}
+
+export const STATE_CODES = {
+	'Alabama': 'AL',
+	'Alaska': 'AK',
+	'Arizona': 'AZ',
+	'Arkansas': 'AR',
+	'California': 'CA',
+	'Colorado': 'CO',
+	'Connecticut': 'CT',
+	'Delaware': 'DE',
+	'District of Columbia': 'DC',
+	'Washington DC': 'DC',
+	'Florida': 'FL',
+	'Georgia': 'GA',
+	'Hawaii': 'HI',
+	'Idaho': 'ID',
+	'Illinois': 'IL',
+	'Indiana': 'IN',
+	'Iowa': 'IA',
+	'Kansas': 'KS',
+	'Kentucky': 'KY',
+	'Louisiana': 'LA',
+	'Maine': 'ME',
+	'Maryland': 'MD',
+	'Massachusetts': 'MA',
+	'Michigan': 'MI',
+	'Minnesota': 'MN',
+	'Mississippi': 'MS',
+	'Missouri': 'MS',
+	'Montana': 'MT',
+	'Nebraska': 'NE',
+	'Nevada': 'NV',
+	'New Hampshire': 'NH',
+	'New Jersey': 'NJ',
+	'New Mexico': 'NM',
+	'New York': 'NY',
+	'North Carolina': 'NC',
+	'North Dakota': 'ND',
+	'Ohio': 'OH',
+	'Oklahoma': 'OK',
+	'Oregon': 'OR',
+	'Pennsylvania': 'PA',
+	'Rhode Island': 'RI',
+	'South Carolina': 'SC',
+	'Tennessee': 'TN',
+	'Texas': 'TX',
+	'Utah': 'UT',
+	'Vermont': 'VT',
+	'Washington': 'WA',
+	'West Virginia': 'WV',
+	'Wiconsin': 'WI',
+	'Wyoming': 'WY'
 }

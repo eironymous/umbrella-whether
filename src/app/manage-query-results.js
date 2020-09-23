@@ -1,10 +1,13 @@
-import { uniqueId, get } from "lodash";
+import { uniqueId } from "lodash";
 import { getWeatherItem } from "./weather-item";
-import { COUNTRY_CODES } from "./constants";
 import { DateTime } from "luxon";
 
 export const parseResults = (results, unit) => {
-	if (results.success === false) {
+	if (results === undefined) {
+		return undefined;
+	}
+
+	if (results.status !== 200) {
 		return results;
 	}
 	
@@ -18,7 +21,7 @@ export const parseResults = (results, unit) => {
 		uniqueId(`${results.name}.`),
 		false,
 		results.name,
-		get(COUNTRY_CODES, results.sys.country, ""),
+		results.sys.country,
 		dateString,
 		Math.round(results.main.temp),
 		unit,

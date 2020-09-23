@@ -171,7 +171,7 @@ export default ({
 			</HeaderCell>
 			<Cell row="2">
 				<NavEntry 
-					active={activeRoute === allRoutes.home || /^details/.test(activeRoute)}
+					active={activeRoute === allRoutes.home}
 					onClick={() => dispatch(updateRoute(allRoutes.home))}
 					navOpen={navOpen}
 					text="Home"
@@ -180,7 +180,7 @@ export default ({
 			</Cell>
 			<Cell row="3">
 				<NavEntry
-					active={activeRoute === allRoutes.help}
+					active={activeRoute === "help"}
 					navOpen={navOpen}
 					text="Help"
 					icon="question-circle"
@@ -189,6 +189,7 @@ export default ({
 			<Cell row="4">
 				<NavEntry
 					active={activeRoute === allRoutes.about} 
+					onClick={() => dispatch(updateRoute(allRoutes.about))}
 					navOpen={navOpen}
 					text="About"
 					icon="info-circle"
