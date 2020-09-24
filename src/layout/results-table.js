@@ -65,7 +65,7 @@ const getUnits = (scale) => {
  * Defines a single list entry in a table of weather results.
  * Takes a WeatherEntryItem and a row number. 
  */
-const ListEntry = ({ entry, row, items, state, setState }) => {
+const ListEntry = ({ entry, row, items, state, setState, showPrompt }) => {
 	const dispatch = useDispatch();
 	const notes = useSelector((state) => selectNotesByLocale(state, entry.id));
 
@@ -123,9 +123,9 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 		});
 	};
 
-	const handleDeleteClicked = () => {
+	const handleDeleteClicked = async () => {
 		if (notes.length) {
-			setState({ ...state, promptModalVisible: true });
+			showPrompt(entry.id);
 		} else {
 			dispatch(deleteById({ id: entry.id, allLocales: items }));
 		}
@@ -203,9 +203,25 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 
 const Table = ({
 	items,
-	state,
-	setState,
+	showPrompt
 }) => {
+	const [ state, setState ] = React.useState({
+		activeHeartTooltip: {
+			id: -1,
+			x: 0,
+			y: 0,
+		},
+		activeEyeTooltip: {
+			id: -1,
+			x: 0,
+			y: 0,
+		},
+		activeDeleteTooltip: {
+			id: -1,
+			x: 0,
+			y: 0,
+		},
+	});
 
 	if (items === undefined || !items.length) return null;
 
@@ -213,7 +229,7 @@ const Table = ({
 		<>
 			<Grid columns="1fr" rows={`repeat(${items.length}, 3em)`} gridGap="10px">
 				{items.map((entry, idx) => {
-					return (<ListEntry entry={entry} key={`weather-list-entry-${entry.id}:${idx}`} row={idx + 1} items={items} state={state} setState={setState} />);
+					return (<ListEntry entry={entry} key={`weather-list-entry-${entry.id}:${idx}`} row={idx + 1} items={items} state={state} setState={setState} showPrompt={showPrompt} />);
 				})}
 			</Grid>
 		</>

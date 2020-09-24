@@ -67,7 +67,7 @@ const Body = () => {
 			<StyledCard>
 				<Grid rows="3em auto">
 					<Cell>
-						<HeaderText>
+						<HeaderText className="header-text">
 							About Umbrella Whether:
 						</HeaderText>
 					</Cell>

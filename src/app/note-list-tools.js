@@ -19,6 +19,10 @@ const { isArray } = Array;
  * @param {[]} newList 
  */
 export const mergeNoteLists = (oldList, newList) => {
+	if (!isArray(oldList) || !isArray(newList)) {
+		throw new TypeError("Both parameters must be arrays.");
+	}
+
 	//Copy input arrays
 	const oldCopy = oldList.slice();
 	const newCopy = newList.slice();
@@ -100,15 +104,15 @@ export const getNotesByLocale = (list, id) => {
 	}
 
 	//Copy the input list
-	const output = [...list];
+	const output = list.slice();
 
-	//Remove all entries that don't match the given id
-	pullAllWith(output, id, (o) => o.localeId.localeCompare(id) !== 0)
-
-	if (list.length === output.length) {
-		//No matches were found, return empty list
+	//If no results are found, return empty array
+	if (findIndex(output, (item) => item.localeId.localeCompare(id) === 0) === -1) {
 		return [];
 	}
+
+	//Remove all entries that don't match the given id
+	pullAllWith(output, id, (o) => o.localeId.localeCompare(id) !== 0);
 
 	return output;
 }
@@ -123,10 +127,6 @@ export const getNotesByLocale = (list, id) => {
  * @param {*} right - The currently-selected right index
  */
 const partition = (list, left, right) => {
-	if (!list || !list.length) {
-		throw TypeError("Array parameter must not be empty or undefined.");
-	}
-
 	let pivot = list[Math.floor((right + left) / 2)];
 	let i = left;
 	let j = right;

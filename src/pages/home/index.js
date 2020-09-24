@@ -1,13 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { Offline, Online } from "react-detect-offline";
-import { pullAllWith, isEqual} from "lodash";
 import Layout from "../../layout/navbar-layout";
 import Table from "./home-body";
 import { parseResults } from "../../app/manage-query-results";
 import { fetchList, fetchUpdates, getWeatherByCoordinates } from "../../app/fetch-weather-for-locale";
-import { setLocales, deleteById, mergeLocales, selectLocales } from "../../state/locales-slice";
-import { setNotes, deleteByLocale } from "../../state/notes-slice";
+import { setLocales, mergeLocales, selectLocales } from "../../state/locales-slice";
+import { setNotes } from "../../state/notes-slice";
 import { updateRoute } from "../../state/router-slice";
 import { selectFirstVisit, selectUnits, setFirstVisit } from "../../state/app-settings-slice";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,7 +39,7 @@ const HiddenHeader = styled.h1`
 `;
 
 
-const Body = ({ state, setState }) => {
+const Body = () => {
 	const dispatch = useDispatch();
 	const [ loaded, setLoaded ] = React.useState(false);
 	const [ geolocation, setGeolocation ] = React.useState(undefined);
@@ -121,6 +120,7 @@ const Body = ({ state, setState }) => {
 				}
 			} catch (error) {
 				console.log(error);
+				dispatch(updateRoute("error"));
 			}
 
 			//Generate and populate list of fresh results
@@ -159,7 +159,7 @@ const Body = ({ state, setState }) => {
 	return (
 		<>
 			<HiddenHeader>home</HiddenHeader>
-			<Table items={storedLocales.locales} state={state} setState={setState} loaded={loaded} />
+			<Table items={storedLocales.locales} loaded={loaded} />
 		</>
 	)
 }
@@ -180,46 +180,19 @@ const OfflineBody = () => {
 }
 
 export default ({ activeRoute, allRoutes }) => {
-	const dispatch = useDispatch();
-	const [state, setState] = React.useState({
-		activeHeartTooltip: {
-			id: -1,
-			x: 0,
-			y: 0,
-		},
-		activeEyeTooltip: {
-			id: -1,
-			x: 0,
-			y: 0,
-		},
-		activeDeleteTooltip: {
-			id: -1,
-			x: 0,
-			y: 0,
-		},
-		promptModalVisible: false,
-		activeEntry: -1,
-	});
-
-	const onDeleteEntry = () => {
-		//Delete the entry...
-		dispatch(deleteById(state.activeEntry));
-		//...and any associated notes
-		dispatch(deleteByLocale(state.activeEntry));
-	};
-
+	
 	return(
 		<>
 			<Online>
 				<Layout 
-					Main={() => <Body state={state} setState={setState} onDeleteEntry={onDeleteEntry} />}
+					Main={() => <Body />}
 					activeRoute={activeRoute}
 					allRoutes={allRoutes}
 				/>
 			</Online>
 			<Offline>
 				<Layout 
-					Main={() => <OfflineBody state={state} setState={setState} onDeleteEntry={onDeleteEntry} />}
+					Main={() => <OfflineBody />}
 					activeRoute={activeRoute}
 					allRoutes={allRoutes}
 				/>

@@ -5,6 +5,7 @@ import Home from "./pages/home/index";
 import Details from "./pages/details/index";
 import About from "./pages/about/index";
 import ErrorPage from "./pages/error_page/index";
+import HelpPage from "./pages/help/index";
 
 export default () => {
 	const currentRoute = useSelector(selectActive);
@@ -23,6 +24,8 @@ export default () => {
 		}
 		case (currentRoute === allRoutes.about):
 			return <About activeRoute={currentRoute} allRoutes={allRoutes} />
+		case (currentRoute === "help"):
+			return <HelpPage activeRoute={currentRoute} allRoutes={allRoutes} />
 		default: return <ErrorPage activeRoute={currentRoute} allRoutes={allRoutes} />;
 	}
 }

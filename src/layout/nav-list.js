@@ -181,6 +181,7 @@ export default ({
 			<Cell row="3">
 				<NavEntry
 					active={activeRoute === "help"}
+					onClick={() => dispatch(updateRoute("help"))}
 					navOpen={navOpen}
 					text="Help"
 					icon="question-circle"

@@ -41,19 +41,19 @@ const HiddenHeader = styled.h1`
 const EmptyState = () => {
 	return (
 		<>
-		<HiddenHeader>home</HiddenHeader>
-		<Parent rows="min-content min-content" columns="1fr">
-			<Cell>
-				<IconContainer>
-					<Icon icon="surprise" />
-				</IconContainer>
-			</Cell>
-			<Cell row="2">
-				<TextContainer>
-					There's nothing here yet! Try searching for a city to add it to your homepage.
-				</TextContainer>
-			</Cell>
-		</Parent>
+			<HiddenHeader>home</HiddenHeader>
+			<Parent rows="min-content min-content" columns="1fr">
+				<Cell>
+					<IconContainer>
+						<Icon icon="surprise" />
+					</IconContainer>
+				</Cell>
+				<Cell row="2">
+					<TextContainer>
+						There's nothing here yet! Try searching for a city to add it to your homepage.
+					</TextContainer>
+				</Cell>
+			</Parent>
 		</>
 	)
 };

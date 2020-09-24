@@ -6,6 +6,7 @@ import { get } from "lodash";
 import { Grid, Cell } from "../../../layout/grid-items";
 import { setFavorite, selectLocales } from "../../../state/locales-slice";
 import Tooltip from "../../../components/tooltip";
+import { getDirectionForDegrees } from "../../../app/get-direction-for-degrees";
 
 const InfoLabel = styled.div`
 	letter-spacing: 1px;
@@ -116,7 +117,7 @@ const DetailedInfoContainer = ({
 			</Cell>
 			<Cell row="3" col="2">
 				<InfoText className="wind-text">
-					{`${locale.windDirection || 0}, ${locale.windSpeed} ${units.windSpeed}`}
+					{`${getDirectionForDegrees(locale.windDirection) || 0}, ${locale.windSpeed} ${units.windSpeed}`}
 				</InfoText>
 			</Cell>
 			<Cell row="4">

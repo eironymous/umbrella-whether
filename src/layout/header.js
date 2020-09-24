@@ -238,9 +238,11 @@ export default () => {
 				</Offline>
 			</Cell>
 			<HeaderCell col="3">
-				<ScaleButton onClick={handleUnitChange}>
-					{scale.localeCompare(CONSTANTS.METRIC_SCALE) === 0 ? "°C" : "°F"}
-				</ScaleButton>
+				<Online>
+					<ScaleButton onClick={handleUnitChange}>
+						{scale.localeCompare(CONSTANTS.METRIC_SCALE) === 0 ? "°C" : "°F"}
+					</ScaleButton>
+				</Online>
 			</HeaderCell>
 		</Header>
 	)

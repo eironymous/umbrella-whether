@@ -8,18 +8,18 @@ import store from "../../../state/state";
 
 configure({ adapter: new Adapter() });
 
-// test('App loads correctly', () => {
-// 	let wrapper = mount(<App/>);
+test('App loads correctly', () => {
+	let wrapper = mount(<App/>);
 
-// 	expect(wrapper).toMatchSnapshot();
-// })
+	expect(wrapper).toMatchSnapshot();
+})
 
-// test('Home page loads correctly', () => {
-// 	let wrapper = mount(
-// 		<Provider store={store}>
-// 			<Home activeRoute={"home"} allRoutes={"home"} />
-// 		</Provider>
-// 	);
+test('Home page loads correctly', () => {
+	let wrapper = mount(
+		<Provider store={store}>
+			<Home activeRoute={"home"} allRoutes={"home"} />
+		</Provider>
+	);
 	
-// 	expect(wrapper.find("h1").text()).toContain("home")
-// });
+	expect(wrapper.find("h1").text()).toContain("home")
+});

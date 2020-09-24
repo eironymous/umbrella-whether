@@ -126,7 +126,7 @@ test('DetailedInfoContainer populates wind degree correctly', () => {
 		</Provider>
 	);
 
-	expect(wrapper.find(".wind-text").first().text()).toContain("360");
+	expect(wrapper.find(".wind-text").first().text()).toContain("N");
 });
 
 test('DetailedInfoContainer populates wind speed correctly', () => {
