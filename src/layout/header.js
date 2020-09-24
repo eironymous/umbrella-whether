@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { findKey, has, get } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import { Online, Offline } from "react-detect-offline";
 import { Grid, Cell } from "./grid-items";
@@ -12,6 +13,8 @@ import { fetchWeather, fetchUpdates } from "../app/fetch-weather-for-locale";
 import { getLocaleByCity } from "../app/locale-list-tools";
 import Tooltip from "../components/tooltip";
 import * as CONSTANTS from "../app/constants";
+
+const { isArray } = Array;
 
 const Header = styled(Grid)`
 	width: 100%;
@@ -49,6 +52,41 @@ const ScaleButton = styled.div`
 		background-color: rgba(255, 255, 255, 0.1);
 	}
 `;
+
+/**
+ * Processes search strings.
+ * Makes a few assumptions:
+ * 	- That the first search term is a city/location name
+ * 	- That any subsequent search terms are separated from the first by a comma.
+ * 
+ * @param {String} val 
+ */
+const processSearchTerms = (val) => {
+	const values = val.trim().split(",");
+
+	let searchString = "";
+
+	if (isArray(values) && values.length > 1) {
+		searchString = values[0];
+
+		values.forEach((value) => {
+			//Check to see if the current value is a state or country for which a code is available
+			const current = findKey(CONSTANTS.COUNTRY_CODES, (item) => item.localeCompare(value.trim()) === 0) || get(CONSTANTS.STATE_CODES, value.trim());
+
+			const alreadyCode = has(CONSTANTS.COUNTRY_CODES, value.trim());
+
+			if (current !== undefined) {
+				searchString = `${searchString},${current}`;
+			} else if (alreadyCode) {
+				searchString = `${searchString},${value}`;
+			}
+		});
+	} else {
+		searchString = val;
+	}
+
+	return searchString;
+}
 
 export default () => {
 	const dispatch = useDispatch();
@@ -95,7 +133,7 @@ export default () => {
 				const parsed = [];
 
 				newList.forEach((result) => {
-					parsed.push(parseResults(result));
+					parsed.push(parseResults(result, CONSTANTS.FAHRENHEIT_SCALE));
 				});
 
 				dispatch(mergeLocales(parsed));
@@ -110,7 +148,7 @@ export default () => {
 				const parsed = [];
 
 				newList.forEach((result) => {
-					parsed.push(parseResults(result));
+					parsed.push(parseResults(result, CONSTANTS.METRIC_SCALE));
 				});
 
 				dispatch(mergeLocales(parsed));
@@ -119,14 +157,17 @@ export default () => {
 	}
 
 	const handleSubmit = async (val) => {
+		//Process input
+		const searchString = processSearchTerms(val);
+
 		const getWeather = async () => {
-			const result = await fetchWeather(val);
-			return parseResults(result);
+			const result = await fetchWeather(searchString);
+			return parseResults(result, scale);
 		}
 		
-		const response = await getWeather(val);
+		const response = await getWeather();
 
-		if (response.success === false) {
+		if (response === undefined) {
 			if (searchRef.current) {
 				setTooltip({
 					show: true,
@@ -197,9 +238,11 @@ export default () => {
 				</Offline>
 			</Cell>
 			<HeaderCell col="3">
-				<ScaleButton onClick={handleUnitChange}>
-					{scale.localeCompare(CONSTANTS.METRIC_SCALE) === 0 ? "°C" : "°F"}
-				</ScaleButton>
+				<Online>
+					<ScaleButton onClick={handleUnitChange}>
+						{scale.localeCompare(CONSTANTS.METRIC_SCALE) === 0 ? "°C" : "°F"}
+					</ScaleButton>
+				</Online>
 			</HeaderCell>
 		</Header>
 	)

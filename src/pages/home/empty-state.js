@@ -30,20 +30,31 @@ const TextContainer = styled.div`
 	font-weight: 800;
 `;
 
+const HiddenHeader = styled.h1`
+	overflow: hidden;
+	position: fixed;
+	height: 0px;
+	width: 0px;
+	opacity: 0;
+`;
+
 const EmptyState = () => {
 	return (
-		<Parent rows="min-content min-content" columns="1fr">
-			<Cell>
-				<IconContainer>
-					<Icon icon="surprise" />
-				</IconContainer>
-			</Cell>
-			<Cell row="2">
-				<TextContainer>
-					There's nothing here yet! Try searching for a city to add it to your homepage.
-				</TextContainer>
-			</Cell>
-		</Parent>
+		<>
+			<HiddenHeader>home</HiddenHeader>
+			<Parent rows="min-content min-content" columns="1fr">
+				<Cell>
+					<IconContainer>
+						<Icon icon="surprise" />
+					</IconContainer>
+				</Cell>
+				<Cell row="2">
+					<TextContainer>
+						There's nothing here yet! Try searching for a city to add it to your homepage.
+					</TextContainer>
+				</Cell>
+			</Parent>
+		</>
 	)
 };
 

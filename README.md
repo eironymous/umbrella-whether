@@ -1,3 +1,27 @@
+## About Umbrella Whether
+
+Umbrella Whether is a simple React app which uses Redux and the OpenWeatherMap API to retrieve and display the current weather information for a list of cities, as well as providing a means for users to leave notes on the page for any given location.
+
+On launch by a first-time user, Umbrella Whether will attempt to retrieve the current weather information for the fifteen most populous cities in the world, which will be displayed in alphabetical order. It will, additionally, request the user's geolocation information. If granted, it will then show the user the current weather based on their location. This location will be stored in the list available on the home page for future viewing.
+
+## How to Use - Home Page
+
+From the home page, the list of stored locations can be maintained. Users can delete entries from the list, or click on the eye icon or the location name to view more detailed information about the current weather status.
+
+Deleting entries from the location list will also delete any associated notes.
+
+At the top of any given page, there will appear:
+	- A search bar, into which users can enter a city and country, or city and US state to search for the weather at that location.
+	- A Celsius/Fahrenheit button which can be used to switch between units as desired.
+
+## How to Use - Details Page
+
+On clicking the eye icon or name of a given location, users will be brought to a page displaying more detailed information on the current weather status. Also on this page, users may click 'Add a Note' to add a new note, after which it will appear on that details page for this and any future viewings, providing local storage is not cleared.
+
+Existing notes may be edited using the pen/edit button or deleted using the trash can button.
+
+## Additional Information
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

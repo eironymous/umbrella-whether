@@ -33,10 +33,10 @@ const StyledCard = styled(Card)`
 
 	::-webkit-scrollbar-thumb {
 		border-radius: 10px;
-		background: #4A4E69;
+		background: #22223B;
 	}
 
-	scrollbar-color: #4A4E69;
+	scrollbar-color: #22223B;
 	scrollbar-width: 4px;
 `;
 
@@ -51,6 +51,14 @@ const Divider = styled.hr`
 	border: 1px solid rgba(255, 255, 255, 0.5);
 	margin: 0;
 	padding: 0;
+`;
+
+const HiddenHeader = styled.h1`
+	overflow: hidden;
+	position: fixed;
+	height: 0px;
+	width: 0px;
+	opacity: 0;
 `;
 
 const getUnits = (scale) => {
@@ -75,10 +83,10 @@ const getUnits = (scale) => {
 const DetailsCard = ({
 	locale
 }) => {
-	const time = locale.localTime.split(" ")[1];
-	const units = getUnits(locale.scale);
 
 	if (locale === undefined) return null;
+
+	const units = getUnits(locale.scale);
 
 	return (
 		<Parent>
@@ -89,10 +97,11 @@ const DetailsCard = ({
 						columns="minmax(360px, 510px) minmax(160px, 1fr) minmax(160px, 1fr)"
 					>
 						<Cell>
-							<MainInfoContainer locale={locale} time={time} units={units} />
+							<HiddenHeader>detail-card</HiddenHeader>
+							<MainInfoContainer locale={locale} time={locale.observationTime} units={units} />
 						</Cell>
 						<Cell col="2/span 2">
-							<DetailedInfoContainer locale={locale} units={units} time={time} />
+							<DetailedInfoContainer locale={locale} units={units} time={locale.observationTime} />
 						</Cell>
 						<Cell row="2" col="1/span 3">
 							<Divider />

@@ -170,6 +170,7 @@ const NoteInput = ({
 					onChange={handleInput}
 					ref={textFieldRef}
 					placeholder={error ? "This field can't be empty! :(" : "Enter your note here and press the send button or hit Enter to submit. :)"}
+					className="note-input"
 				/>
 			</Cell>
 			<Cell row="2" col="1">

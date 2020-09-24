@@ -1,35 +1,39 @@
 import { uniqueId } from "lodash";
 import { getWeatherItem } from "./weather-item";
+import { DateTime } from "luxon";
 
-export const parseResults = (results) => {
-	if (results.success === false) {
-		return results;
+export const parseResults = (results, unit) => {
+	if (results === undefined) {
+		return undefined;
 	}
 
-	const utc = results.location.utc_offset.charAt(0).localeCompare("-") !== 0 ? "+".concat(results.location.utc_offset) : results.location.utc_offset;
+	if (results.status !== 200) {
+		return results;
+	}
 	
+	const timezone = results.timezone / 60;
+	const time = DateTime.fromSeconds(results.dt).toUTC(timezone);
+	const hoursMinutesIsolated = time.toString().split("T")[1].split(":");
+	const offset = /\+/.test(hoursMinutesIsolated[2]) ? `+${hoursMinutesIsolated[2].split("+")[1]}:${hoursMinutesIsolated[3]}` : `-${hoursMinutesIsolated[2].split("-")[1]}:${hoursMinutesIsolated[3]}`;
+	const dateString = `${hoursMinutesIsolated[0]}:${hoursMinutesIsolated[1]} GMT ${offset}`;
+
 	return getWeatherItem(
-		uniqueId(`${results.location.name}.`),
+		uniqueId(`${results.name}.`),
 		false,
-		results.location.name,
-		results.location.country,
-		results.location.localtime,
-		results.current.observation_time,
-		utc,
-		results.current.temperature,
-		results.request.unit,
-		results.current.weather_icons,
-		results.current.weather_descriptions,
-		results.current.wind_speed,
-		results.current.wind_dir,
-		results.current.pressure,
-		results.current.precipitation,
-		results.current.humidity,
-		results.current.cloudcover,
-		results.current.feelslike,
-		results.current.uv_index,
-		results.current.visibility,
-		results.location.lat,
-		results.location.lon
+		results.name,
+		results.sys.country,
+		dateString,
+		Math.round(results.main.temp),
+		unit,
+		[results.weather[0].main],
+		results.wind.speed,
+		results.wind.deg,
+		results.main.pressure,
+		results.rain,
+		results.snow,
+		results.main.humidity,
+		results.clouds.all,
+		Math.round(results.main.feels_like),
+		results.visibility
 	);
 }

@@ -2,6 +2,7 @@
   "name": "weather-app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
     "@fortawesome/free-regular-svg-icons": "^5.14.0",
@@ -10,10 +11,14 @@
     "@reduxjs/toolkit": "^1.4.0",
     "axios": "^0.20.0",
     "cra-template": "1.0.3",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.4",
     "lodash": "^4.17.20",
+    "luxon": "^1.25.0",
     "react": "^16.13.1",
     "react-detect-offline": "^2.4.0",
     "react-dom": "^16.13.1",
+    "react-is": "^16.13.1",
     "react-redux": "^7.2.1",
     "react-scripts": "3.4.3",
     "redux": "^4.0.5",
@@ -21,7 +26,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "babel src -d lib",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -49,7 +54,6 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^8.1.0",
     "babel-plugin-styled-components": "^1.11.1",
-    "babel-preset-react": "^6.24.1",
-    "jest-dom": "^4.0.0"
+    "babel-preset-react": "^6.24.1"
   }
 }

@@ -1,14 +1,16 @@
 import React from "react";
 import styled from "styled-components";
-import { useDispatch } from "react-redux";
+import { get } from "lodash";
+import { useDispatch, useSelector } from "react-redux";
 import { updateRoute } from "../state/router-slice";
-import { deleteByLocale } from "../state/notes-slice";
+import { deleteByLocale, selectNotesByLocale } from "../state/notes-slice";
 import { setFavorite, deleteById } from "../state/locales-slice";
 import { FontAwesomeIcon as Icon } from "@fortawesome/react-fontawesome";
 import { Grid, Cell } from "./grid-items";
 import Card from "./card";
-import { FAHRENHEIT_SCALE, METRIC_SCALE, SCIENTIFIC_SCALE } from "../app/constants";
+import { FAHRENHEIT_SCALE, METRIC_SCALE, SCIENTIFIC_SCALE, COUNTRY_CODES } from "../app/constants";
 import Tooltip from "../components/tooltip";
+import PromptModal from "../components/prompt-modal";
 
 const ListEntryCard = styled(Card)`
 	position: relative;
@@ -63,20 +65,13 @@ const getUnits = (scale) => {
  * Defines a single list entry in a table of weather results.
  * Takes a WeatherEntryItem and a row number. 
  */
-const ListEntry = ({ entry, row, items, state, setState }) => {
+const ListEntry = ({ entry, row, items, state, setState, showPrompt }) => {
 	const dispatch = useDispatch();
+	const notes = useSelector((state) => selectNotesByLocale(state, entry.id));
 
 	if (entry === undefined) return null;
 
 	const units = getUnits(entry.scale);
-	const time = entry.localTime ? entry.localTime.split(" ")[1] : "Unknown Time";
-
-	const onDeleteEntry = () => {
-		//Delete the entry...
-		dispatch(deleteById({ id: entry.id, allLocales: items }));
-		//...and any associated notes
-		dispatch(deleteByLocale(entry.id));
-	};
 
 	const showHeartTooltip = (evt) => {
 		setState({
@@ -128,9 +123,17 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 		});
 	};
 
+	const handleDeleteClicked = async () => {
+		if (notes.length) {
+			showPrompt(entry.id);
+		} else {
+			dispatch(deleteById({ id: entry.id, allLocales: items }));
+		}
+	}
+
 	return (
 		<>
-		<Tooltip 
+			<Tooltip 
 				show={entry.id.localeCompare(state.activeHeartTooltip.id) === 0} 
 				text={entry.favorited ? "Remove favorite" : "Add favorite"}
 				x={state.activeHeartTooltip.x}
@@ -159,10 +162,10 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 						/>
 					</CityCell>
 					<CityCell col="2" onClick={() => dispatch(updateRoute(`details-${entry.id}`))}>
-							<span onMouseOver={showEyeTooltip} onMouseOut={hideAllTooltips}>{`${entry.city} - ${entry.country}`}</span>
+							<span onMouseOver={showEyeTooltip} onMouseOut={hideAllTooltips}>{`${entry.city} - ${get(COUNTRY_CODES, entry.country)}`}</span>
 					</CityCell>
 					<TempCell col="3">
-							<strong>{`${entry.temperature} °${units}`}</strong> {`at`} <strong>{time}</strong> {`UTC ${entry.utcOffset}`}
+							<strong>{`${entry.temperature} °${units}`}</strong> {`at`} <strong>{entry.observationTime}</strong>
 					</TempCell>
 					<CityCell col="4">
 						{entry.favorited &&
@@ -187,7 +190,7 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 							icon="minus-circle" 
 							onMouseOver={showDeleteTooltip}
 							onMouseOut={hideAllTooltips}
-							onClick={onDeleteEntry} 
+							onClick={handleDeleteClicked} 
 							style={{ cursor: "pointer" }}
 						/>
 					</CityCell>
@@ -200,6 +203,7 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 
 const Table = ({
 	items,
+	showPrompt
 }) => {
 	const [ state, setState ] = React.useState({
 		activeHeartTooltip: {
@@ -216,17 +220,19 @@ const Table = ({
 			id: -1,
 			x: 0,
 			y: 0,
-		}
+		},
 	});
 
 	if (items === undefined || !items.length) return null;
 
 	return(
-		<Grid columns="1fr" rows={`repeat(${items.length}, 3em)`} gridGap="10px">
-			{items.map((entry, idx) => {
-				return (<ListEntry entry={entry} key={`weather-list-entry-${entry.id}:${idx}`} row={idx + 1} items={items} state={state} setState={setState} />);
-			})}
-		</Grid>
+		<>
+			<Grid columns="1fr" rows={`repeat(${items.length}, 3em)`} gridGap="10px">
+				{items.map((entry, idx) => {
+					return (<ListEntry entry={entry} key={`weather-list-entry-${entry.id}:${idx}`} row={idx + 1} items={items} state={state} setState={setState} showPrompt={showPrompt} />);
+				})}
+			</Grid>
+		</>
 	)
 }
 

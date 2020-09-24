@@ -26,7 +26,7 @@ export const localesSlice = createSlice({
 		},
 		//Set favorite
 		setFavorite: (state, {payload}) => {
-			const allLocales = payload.allLocales;
+			const allLocales = [...state.locales];
 
 			//Find the index of the locale in question
 			const idx = findIndex(allLocales, (item) => item.id === payload.id);
@@ -43,10 +43,10 @@ export const localesSlice = createSlice({
 		},
 		//Delete by id
 		deleteById: (state, {payload}) => {
-			const allLocales = payload.allLocales;
+			const allLocales = [...state.locales];
 
 			//Find the index of the locale in question
-			const idx = findIndex(allLocales, (item) => item.id === payload.id);
+			const idx = findIndex(allLocales, (item) => item.id === payload);
 
 			if (idx !== -1) {
 				const newList = allLocales.filter((_item, i) => i !== idx);

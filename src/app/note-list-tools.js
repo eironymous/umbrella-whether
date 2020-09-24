@@ -19,6 +19,10 @@ const { isArray } = Array;
  * @param {[]} newList 
  */
 export const mergeNoteLists = (oldList, newList) => {
+	if (!isArray(oldList) || !isArray(newList)) {
+		throw new TypeError("Both parameters must be arrays.");
+	}
+
 	//Copy input arrays
 	const oldCopy = oldList.slice();
 	const newCopy = newList.slice();
@@ -32,8 +36,6 @@ export const mergeNoteLists = (oldList, newList) => {
 
 	//Initialize variable to store ids of any notes with updated values
 	const copiedNotes = [];
-
-	console.log(oldDistinct, newDistinct);
 
 	if (!isEmpty(oldDistinct)) {
 		oldDistinct.forEach((entry) => {
@@ -65,11 +67,11 @@ export const mergeNoteLists = (oldList, newList) => {
 }
 
 /**
- * Sorts the given list in ascending order by id field
+ * Sorts the given list in ascending order by timestamp field
  * @param {[]} list 
  */
-export const sortById = (list) => {
-	return sortListById(list);
+export const sortByDate = (list) => {
+	return sortListByDate(list, 0, list.length - 1);
 }
 
 /**
@@ -94,7 +96,7 @@ export const getNoteById = (list, id) => {
 /**
  * Selects any notes associated with the given locale id from a list.
  * @param {[]} list 
- * @param {String} id 
+ * @param {String} id
  */
 export const getNotesByLocale = (list, id) => {
 	if (!isArray(list)) {
@@ -102,10 +104,15 @@ export const getNotesByLocale = (list, id) => {
 	}
 
 	//Copy the input list
-	const output = [...list];
+	const output = list.slice();
+
+	//If no results are found, return empty array
+	if (findIndex(output, (item) => item.localeId.localeCompare(id) === 0) === -1) {
+		return [];
+	}
 
 	//Remove all entries that don't match the given id
-	pullAllWith(output, id, (o) => o.localeId.localeCompare(id) !== 0)
+	pullAllWith(output, id, (o) => o.localeId.localeCompare(id) !== 0);
 
 	return output;
 }
@@ -120,19 +127,15 @@ export const getNotesByLocale = (list, id) => {
  * @param {*} right - The currently-selected right index
  */
 const partition = (list, left, right) => {
-	if (!list || !list.length) {
-		throw TypeError("Array parameter must not be empty or undefined.");
-	}
-
 	let pivot = list[Math.floor((right + left) / 2)];
 	let i = left;
 	let j = right;
 
 	while (i <= j) {
-		while (list[i].id.localeCompare(pivot.id) < 0) {
+		while (list[i].timeStamp - pivot.timeStamp > 0) {
 			i++;
 		}
-		while (list[j].id.localeCompare(pivot.id) > 0) {
+		while (list[j].timeStamp - pivot.timeStamp < 0) {
 			j--;
 		}
 
@@ -164,7 +167,7 @@ const swap = (items, left, right) => {
  * @param {integer} left - The starting leftmost index
  * @param {integer} right - The starting rightmost index
  */
-const sortListById = (items, left, right) => {
+const sortListByDate = (items, left, right) => {
 	if (!items || !items.length) {
 		throw TypeError("Array parameter must not be empty or undefined.");
 	}
@@ -177,13 +180,13 @@ const sortListById = (items, left, right) => {
 		//If there are more elements on the left,
 		if (left < idx - 1) {
 			//Select that segment
-			sortListById(items, left, idx - 1);
+			sortListByDate(items, left, idx - 1);
 		}
 
 		//Else if there are more elements on the right,
 		if (idx < right) {
 			//Use that segment
-			sortListById(items, idx, right);
+			sortListByDate(items, idx, right);
 		}
 	}
 

@@ -6,6 +6,7 @@ export const appSettingsSlice = createSlice({
 	initialState: {
 		units: CONSTANTS.METRIC_SCALE,
 		firstVisit: true,
+		navOpen: true,
 	},
 	reducers: {
 		setUnits: (state, {payload}) => {
@@ -13,12 +14,16 @@ export const appSettingsSlice = createSlice({
 		},
 		setFirstVisit: (state, {payload}) => {
 			state.firstVisit = payload;
+		},
+		setNavOpen: (state, {payload}) => {
+			state.navOpen = payload;
 		}
 	}
 });
 
-export const { setUnits, setFirstVisit } = appSettingsSlice.actions;
+export const { setUnits, setFirstVisit, setNavOpen } = appSettingsSlice.actions;
 export const selectUnits = state => state.settings.units;
 export const selectFirstVisit = state => state.settings.firstVisit;
+export const selectNavOpen = state => state.settings.navOpen;
 
 export default appSettingsSlice.reducer;

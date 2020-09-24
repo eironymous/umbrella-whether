@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { get } from "lodash";
 import { Grid, Cell } from "../../../layout/grid-items";
 import { getIconForKeyword } from "../icon-selector";
+import { COUNTRY_CODES } from "../../../app/constants";
 
 const LocationNameText = styled.div`
 	font-weight: 800;
@@ -57,25 +59,25 @@ const MainInfoContainer = ({
 			gridGap="16px"
 		>
 			<Cell row="1" col="1/span 2">
-				<LocationNameText>
+				<LocationNameText className="city-text">
 					{`${locale.city},`}
 				</LocationNameText>
 			</Cell>
 			<Cell row="2" col="1/span 2">
-				<LocationNameText>
-					{locale.country}
+				<LocationNameText className="country-text">
+					{get(COUNTRY_CODES, locale.country)}
 				</LocationNameText>
 			</Cell>
 			<IconCell row="3/span 2">
 				{getIconForKeyword(locale.descriptions[0], time)}
 			</IconCell>
 			<Cell row="3" col="2">
-				<TemperatureText>
+				<TemperatureText className="temperature-text">
 					{`${locale.temperature} ${units.temperature}`}
 				</TemperatureText>
 			</Cell>
 			<Cell row="4" col="2">
-				<FeelsLikeText>
+				<FeelsLikeText className="feels-like-text">
 					{`/ feels like ${locale.feelsLike} ${units.temperature}`}
 				</FeelsLikeText>
 			</Cell>

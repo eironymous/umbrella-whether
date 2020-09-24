@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NoteElement loads 1`] = `ReactWrapper {}`;

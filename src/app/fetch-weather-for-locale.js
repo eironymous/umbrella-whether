@@ -4,7 +4,7 @@ import { FAHRENHEIT_SCALE, METRIC_SCALE, SCIENTIFIC_SCALE } from "./constants";
 /**
  * Fetches current weather information for the given locale in the given scale
  * @param {String} locale - May be a city name, UK/Canada/US ZIP code, or latitude and longitude coordinates.
- * @param {String} scale - The requested scale - s for scientific, m for metric (default), or f for fahrenheit + imperial
+ * @param {String} scale - The requested scale
  */
 export const fetchWeather = (locale, scale = METRIC_SCALE) => {
 	//Validate inputs - locale must be defined
@@ -14,11 +14,25 @@ export const fetchWeather = (locale, scale = METRIC_SCALE) => {
 
 	//Scale must be within three acceptable values defined in constants.js
 	if (!scaleIsValid(scale)) {
-		throw TypeError("fetch-weather-for-locale: Invalid scale parameter passed: must be 'm', 's', or 'f'.");
+		throw TypeError("fetch-weather-for-locale: Invalid scale parameter passed.");
 	}
 
 	//Make request, extract data from promise and return
-	return axiosRequest(locale, scale).then(data => data);
+	return axiosRequest(locale, scale).then(data => data).catch((err) => console.log(err));
+}
+
+/**
+ * Retrieves weather based on coordinates.
+ * @param {String} lat 
+ * @param {String} lon 
+ * @param {String} scale 
+ */
+export const getWeatherByCoordinates = (lat, lon, scale = METRIC_SCALE) => {
+	if (!scaleIsValid(scale)) {
+		throw TypeError("fetch-weather-for-locale: Invalid scale parameter passed.")
+	}
+
+	return axiosByCoords(lat, lon, scale).then(data => data).catch(err => console.log(err));
 }
 
 /**
@@ -41,7 +55,7 @@ export const fetchList = (localeList, scale = METRIC_SCALE) => {
 		list.push(axiosRequest(locale, scale));
 	});
 
-	return Promise.all(list).then((vals) => vals);
+	return Promise.all(list).then((vals) => vals).catch((err) => console.log(err));
 }
 
 /**
@@ -60,43 +74,50 @@ export const fetchUpdates = (locales, scale = METRIC_SCALE) => {
 	}
 
 	const list = [];
-	const failed = [];
 
 	locales.forEach((locale) => {
-		const result = axiosRequest(locale.city, scale);
-		if (result.success === false) {
-			failed.push(locale);
-		} else {
-			list.push(result);
-		}
+		list.push(axiosRequest(`${locale.city},${locale.country}`, scale));
 	});
 
-	if (failed.length) {
-		failed.forEach((locale) => {
-			list.push(axiosRequest(`${locale.lat},${locale.long}`, scale));
-		});
-	}
-
-	return Promise.all(list).then((vals) => vals);
+	return Promise.all(list).then((vals) => vals).catch((err) => console.log(err));
 }
 
 //Performs axios request
 const axiosRequest = (locale, scale) => {
 	const params = {
-		access_key: process.env.REACT_APP_WEATHERSTACK_API_KEY,
-		query: locale,
+		appid: process.env.REACT_APP_OPENWEATHER_API_KEY,
+		q: locale,
 		units: scale
 	}
 
+	console.log("requesting!");
+
 	return axios.get(
-		"http://api.weatherstack.com/current", { params }
+		"https://api.openweathermap.org/data/2.5/weather", { params }
 	).then(
 		//Extract promise
-		(res) => { return res.data; }
+		(res) => { return { ...res.data, status: res.status }; }
 	).catch(err => {
-		//Throw the error up to presentation
-		throw err;
+		//Log the error
+		console.log(err);
 	});
+}
+
+const axiosByCoords = (lat, lon, scale) => {
+	const params = {
+		appid: process.env.REACT_APP_OPENWEATHER_API_KEY,
+		units: scale,
+		lat,
+		lon
+	};
+
+	return axios.get(
+		"https://api.openweathermap.org/data/2.5/weather", { params }
+	).then(
+		(res) => { return { ...res.data, status: res.status }; }
+	).catch(err => {
+		console.log(err);
+	})
 }
 
 export const scaleIsValid = (scale) => {

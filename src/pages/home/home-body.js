@@ -3,6 +3,10 @@ import styled from "styled-components";
 import { Grid, Cell } from "../../layout/grid-items";
 import Table from "../../layout/results-table";
 import { reorderByFavorite } from "../../app/locale-list-tools";
+import { deleteById } from "../../state/locales-slice";
+import { deleteByLocale } from "../../state/notes-slice";
+import PromptModal from "../../components/prompt-modal";
+import { useDispatch } from "react-redux";
 
 const Body = styled(Grid)`
 	padding: 2em;
@@ -43,9 +47,29 @@ const WaitingText = styled.div`
 
 const HomeList = ({
 	items = [],
-	loaded
+	loaded,
 }) => {
 	const [ list, setList ] = React.useState(items);
+	const dispatch = useDispatch();
+	const [state, setState] = React.useState({
+		promptModalVisible: false,
+		activeEntry: -1,
+	});
+
+	const onDeleteEntry = () => {
+		//Delete the entry...
+		dispatch(deleteById(state.activeEntry));
+		//...and any associated notes
+		dispatch(deleteByLocale(state.activeEntry));
+	};
+
+	const setPromptModalVisibility = (bool) => {
+		setState({ ...state, promptModalVisible: bool });
+	}
+
+	const showPrompt = (id) => {
+		setState({ promptModalVisible: true, activeEntry: id })
+	}
 
 	React.useEffect(() => {
 		const updateList = () => {
@@ -69,9 +93,16 @@ const HomeList = ({
 
 	return(
 		<Body rows="80vh" columns="1fr">
+			<PromptModal 
+				onCancel={() => setPromptModalVisibility(false)} 
+				onConfirm={onDeleteEntry}
+				header="Delete this saved location?"
+				text="You can always search for it to add it to the list again, but your notes will be lost."
+				visible={state.promptModalVisible}
+			/>
 			<ListCell>
 				{loaded && 
-					<Table items={list} />
+					<Table items={list} showPrompt={showPrompt} />
 				}
 				{!loaded &&
 					<WaitingText>Please wait while we poke our heads outside...</WaitingText>
