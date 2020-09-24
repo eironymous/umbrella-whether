@@ -8,7 +8,7 @@ const Body = ({ locale }) => {
 	return(
 		<DetailsCard locale={locale} />
 	)
-}
+};
 
 const Details = ({ id, activeRoute, allRoutes }) => {
 	const locale = useSelector((state) => selectLocaleById(state, id));
