@@ -93,7 +93,7 @@ const axiosRequest = (locale, scale) => {
 	console.log("requesting!");
 
 	return axios.get(
-		"https://api.openweathermap.org/data/2.5/weather", { params }
+		"https://api.openweathermap.org/data/2.5/weather", { params, timeout: 500 },
 	).then(
 		//Extract promise
 		(res) => { return { ...res.data, status: res.status }; }
@@ -112,7 +112,7 @@ const axiosByCoords = (lat, lon, scale) => {
 	};
 
 	return axios.get(
-		"https://api.openweathermap.org/data/2.5/weather", { params }
+		"https://api.openweathermap.org/data/2.5/weather", { params, timeout: 500 }
 	).then(
 		(res) => { return { ...res.data, status: res.status }; }
 	).catch(err => {
