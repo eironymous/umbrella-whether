@@ -75,18 +75,21 @@ const Body = () => {
 
 			const result = await getWeatherByCoordinates(lat, long, units);
 			const parsed = parseResults(result, units);
-			await dispatch(mergeLocales([ parsed ]));
 
-			//If the city already exists in the store, use the extant id for the redirect
-			let match = undefined;
-			
-			for (let i = 0; i < storedLocales.locales.length; i++) {
-				if (storedLocales.locales[i].city.localeCompare(parsed.city) === 0) {
-					match = storedLocales.locales[i];
+			if (parsed !== undefined) {
+				await dispatch(mergeLocales([ parsed ]));
+
+				//If the city already exists in the store, use the extant id for the redirect
+				let match = undefined;
+				
+				for (let i = 0; i < storedLocales.locales.length; i++) {
+					if (storedLocales.locales[i].city.localeCompare(parsed.city) === 0) {
+						match = storedLocales.locales[i];
+					}
 				}
-			}
 
-			dispatch(updateRoute(`details-${match !== undefined ? match.id : parsed.id}`));
+				dispatch(updateRoute(`details-${match !== undefined ? match.id : parsed.id}`));
+			}
 		} catch (error) {
 			console.log(error);
 		}
