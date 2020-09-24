@@ -92,12 +92,13 @@ export default () => {
 	const dispatch = useDispatch();
 	const allLocales = useSelector(selectLocales);
 	const searchRef = React.useRef();
+	const buttonRef = React.useRef();
 	const scale = useSelector(selectUnits);
 
 	const [ responseReceived, setResponseReceived ] = React.useState(false);
 	const [ city, setCity ] = React.useState("");
 	const [ tooltip, setTooltip ] = React.useState({
-		show: false,
+		show: -1,
 		x: 0,
 		y: 0,
 	});
@@ -124,34 +125,84 @@ export default () => {
 	}, [allLocales, responseReceived, dispatch, city]);
 
 	const handleUnitChange = async () => {
-		if (scale.localeCompare(CONSTANTS.METRIC_SCALE) === 0) {
-			dispatch(setUnits(CONSTANTS.FAHRENHEIT_SCALE));
+		try{
+			if (scale.localeCompare(CONSTANTS.METRIC_SCALE) === 0) {
+				dispatch(setUnits(CONSTANTS.FAHRENHEIT_SCALE));
 
-			if (allLocales.locales.length) {
-				const copy = [...allLocales.locales];
-				const newList = await fetchUpdates(copy, CONSTANTS.FAHRENHEIT_SCALE);
-				const parsed = [];
+				if (allLocales.locales.length) {
+					const copy = [...allLocales.locales];
+					const newList = await fetchUpdates(copy, CONSTANTS.FAHRENHEIT_SCALE);
+					const parsed = [];
 
-				newList.forEach((result) => {
-					parsed.push(parseResults(result, CONSTANTS.FAHRENHEIT_SCALE));
-				});
+					newList.forEach((result) => {
+						if (result !== undefined) {
+							parsed.push(parseResults(result, CONSTANTS.FAHRENHEIT_SCALE));
+						}
+					});
 
-				dispatch(mergeLocales(parsed));
+					if (parsed.length === 0) {
+						if (buttonRef.current) {
+							setTooltip({
+								show: 1,
+								x: buttonRef.current.getBoundingClientRect().left - 100,
+								y: buttonRef.current.getBoundingClientRect().bottom
+							});
+
+							setTimeout(() => setTooltip({
+								...tooltip,
+								show: -1
+							}), 5000);
+						}
+					}
+
+					dispatch(mergeLocales(parsed));
+				}
+			} else {
+				dispatch(setUnits(CONSTANTS.METRIC_SCALE));
+
+				if(allLocales.locales.length) {
+					const copy = [...allLocales.locales];
+
+					const newList = await fetchUpdates(copy, CONSTANTS.METRIC_SCALE);
+					const parsed = [];
+
+					newList.forEach((result) => {
+						if (result !== undefined) {
+							parsed.push(parseResults(result, CONSTANTS.FAHRENHEIT_SCALE));
+						}
+					});
+
+					if (parsed.length === 0) {
+						if (buttonRef.current) {
+							setTooltip({
+								show: 1,
+								x: buttonRef.current.getBoundingClientRect().left - 100,
+								y: buttonRef.current.getBoundingClientRect().bottom
+							});
+
+							setTimeout(() => setTooltip({
+								...tooltip,
+								show: -1
+							}), 5000);
+						}
+					}
+
+					dispatch(mergeLocales(parsed));
+				}
 			}
-		} else {
-			dispatch(setUnits(CONSTANTS.METRIC_SCALE));
-
-			if(allLocales.locales.length) {
-				const copy = [...allLocales.locales];
-
-				const newList = await fetchUpdates(copy, CONSTANTS.METRIC_SCALE);
-				const parsed = [];
-
-				newList.forEach((result) => {
-					parsed.push(parseResults(result, CONSTANTS.METRIC_SCALE));
+		} catch (err){
+			console.log(err);
+			if (buttonRef.current) {
+				setTooltip({
+					show: 1,
+					x: buttonRef.current.getBoundingClientRect().left + 100,
+					y: buttonRef.current.getBoundingClientRect().bottom
 				});
 
-				dispatch(mergeLocales(parsed));
+				setTimeout(() => setTooltip({
+					...tooltip,
+					show: -1
+				}), 5000);
 			}
 		}
 	}
@@ -170,14 +221,14 @@ export default () => {
 		if (response === undefined) {
 			if (searchRef.current) {
 				setTooltip({
-					show: true,
+					show: 0,
 					x: searchRef.current.getBoundingClientRect().right - 100,
 					y: searchRef.current.getBoundingClientRect().bottom
 				});
 
 				setTimeout(() => setTooltip({
 					...tooltip,
-					show: false
+					show: -1
 				}), 5000);
 			}
 			return;
@@ -196,7 +247,7 @@ export default () => {
 	const handleSubmitWhenOffline = () => {
 		if (searchRef.current) {
 			setTooltip({
-				show: true,
+				show: -1,
 				x: searchRef.current.getBoundingClientRect().right - 100,
 				y: searchRef.current.getBoundingClientRect().bottom
 			});
@@ -212,7 +263,7 @@ export default () => {
 		<Header rows="60px" columns="0fr 0fr 1fr">
 			<Online>
 				<Tooltip
-					show={tooltip.show}
+					show={tooltip.show === 0}
 					x={tooltip.x}
 					y={tooltip.y}
 					text="Your search returned no results! :( Please try again."
@@ -220,12 +271,18 @@ export default () => {
 			</Online>
 			<Offline>
 				<Tooltip
-					show={tooltip.show}
+					show={tooltip.show === 0}
 					x={tooltip.x}
 					y={tooltip.y}
 					text="Search function is not available when you're offline! :( Check your network connection and try again."
 				/>
 			</Offline>
+				<Tooltip 
+					show={tooltip.show === 1}
+					x={tooltip.x}
+					y={tooltip.y}
+					text="Something went wrong when attempting to update units. Please try again in a minute or two."
+				/>
 			<HeaderCell>
 				Search:
 			</HeaderCell>
@@ -239,7 +296,7 @@ export default () => {
 			</Cell>
 			<HeaderCell col="3">
 				<Online>
-					<ScaleButton onClick={handleUnitChange}>
+					<ScaleButton onClick={handleUnitChange} ref={buttonRef}>
 						{scale.localeCompare(CONSTANTS.METRIC_SCALE) === 0 ? "°C" : "°F"}
 					</ScaleButton>
 				</Online>
