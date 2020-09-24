@@ -43,7 +43,9 @@ const WaitingText = styled.div`
 
 const HomeList = ({
 	items = [],
-	loaded
+	loaded,
+	state,
+	setState,
 }) => {
 	const [ list, setList ] = React.useState(items);
 
@@ -71,7 +73,7 @@ const HomeList = ({
 		<Body rows="80vh" columns="1fr">
 			<ListCell>
 				{loaded && 
-					<Table items={list} />
+					<Table items={list} state={state} setState={setState} />
 				}
 				{!loaded &&
 					<WaitingText>Please wait while we poke our heads outside...</WaitingText>

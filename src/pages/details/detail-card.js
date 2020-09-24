@@ -53,6 +53,14 @@ const Divider = styled.hr`
 	padding: 0;
 `;
 
+const HiddenHeader = styled.h1`
+	overflow: hidden;
+	position: fixed;
+	height: 0px;
+	width: 0px;
+	opacity: 0;
+`;
+
 const getUnits = (scale) => {
 	switch (true) {
 		case scale.localeCompare(CONSTANTS.METRIC_SCALE) === 0:
@@ -89,6 +97,7 @@ const DetailsCard = ({
 						columns="minmax(360px, 510px) minmax(160px, 1fr) minmax(160px, 1fr)"
 					>
 						<Cell>
+							<HiddenHeader>detail-card</HiddenHeader>
 							<MainInfoContainer locale={locale} time={locale.observationTime} units={units} />
 						</Cell>
 						<Cell col="2/span 2">

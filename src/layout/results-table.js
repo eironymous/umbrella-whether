@@ -1,15 +1,16 @@
 import React from "react";
 import styled from "styled-components";
 import { get } from "lodash";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateRoute } from "../state/router-slice";
-import { deleteByLocale } from "../state/notes-slice";
+import { deleteByLocale, selectNotesByLocale } from "../state/notes-slice";
 import { setFavorite, deleteById } from "../state/locales-slice";
 import { FontAwesomeIcon as Icon } from "@fortawesome/react-fontawesome";
 import { Grid, Cell } from "./grid-items";
 import Card from "./card";
 import { FAHRENHEIT_SCALE, METRIC_SCALE, SCIENTIFIC_SCALE, COUNTRY_CODES } from "../app/constants";
 import Tooltip from "../components/tooltip";
+import PromptModal from "../components/prompt-modal";
 
 const ListEntryCard = styled(Card)`
 	position: relative;
@@ -66,17 +67,11 @@ const getUnits = (scale) => {
  */
 const ListEntry = ({ entry, row, items, state, setState }) => {
 	const dispatch = useDispatch();
+	const notes = useSelector((state) => selectNotesByLocale(state, entry.id));
 
 	if (entry === undefined) return null;
 
 	const units = getUnits(entry.scale);
-
-	const onDeleteEntry = () => {
-		//Delete the entry...
-		dispatch(deleteById({ id: entry.id, allLocales: items }));
-		//...and any associated notes
-		dispatch(deleteByLocale(entry.id));
-	};
 
 	const showHeartTooltip = (evt) => {
 		setState({
@@ -128,9 +123,17 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 		});
 	};
 
+	const handleDeleteClicked = () => {
+		if (notes.length) {
+			setState({ ...state, promptModalVisible: true });
+		} else {
+			dispatch(deleteById({ id: entry.id, allLocales: items }));
+		}
+	}
+
 	return (
 		<>
-		<Tooltip 
+			<Tooltip 
 				show={entry.id.localeCompare(state.activeHeartTooltip.id) === 0} 
 				text={entry.favorited ? "Remove favorite" : "Add favorite"}
 				x={state.activeHeartTooltip.x}
@@ -187,7 +190,7 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 							icon="minus-circle" 
 							onMouseOver={showDeleteTooltip}
 							onMouseOut={hideAllTooltips}
-							onClick={onDeleteEntry} 
+							onClick={handleDeleteClicked} 
 							style={{ cursor: "pointer" }}
 						/>
 					</CityCell>
@@ -200,33 +203,20 @@ const ListEntry = ({ entry, row, items, state, setState }) => {
 
 const Table = ({
 	items,
+	state,
+	setState,
 }) => {
-	const [ state, setState ] = React.useState({
-		activeHeartTooltip: {
-			id: -1,
-			x: 0,
-			y: 0,
-		},
-		activeEyeTooltip: {
-			id: -1,
-			x: 0,
-			y: 0,
-		},
-		activeDeleteTooltip: {
-			id: -1,
-			x: 0,
-			y: 0,
-		}
-	});
 
 	if (items === undefined || !items.length) return null;
 
 	return(
-		<Grid columns="1fr" rows={`repeat(${items.length}, 3em)`} gridGap="10px">
-			{items.map((entry, idx) => {
-				return (<ListEntry entry={entry} key={`weather-list-entry-${entry.id}:${idx}`} row={idx + 1} items={items} state={state} setState={setState} />);
-			})}
-		</Grid>
+		<>
+			<Grid columns="1fr" rows={`repeat(${items.length}, 3em)`} gridGap="10px">
+				{items.map((entry, idx) => {
+					return (<ListEntry entry={entry} key={`weather-list-entry-${entry.id}:${idx}`} row={idx + 1} items={items} state={state} setState={setState} />);
+				})}
+			</Grid>
+		</>
 	)
 }
 

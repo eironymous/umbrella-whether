@@ -59,12 +59,12 @@ const MainInfoContainer = ({
 			gridGap="16px"
 		>
 			<Cell row="1" col="1/span 2">
-				<LocationNameText>
+				<LocationNameText className="city-text">
 					{`${locale.city},`}
 				</LocationNameText>
 			</Cell>
 			<Cell row="2" col="1/span 2">
-				<LocationNameText>
+				<LocationNameText className="country-text">
 					{get(COUNTRY_CODES, locale.country)}
 				</LocationNameText>
 			</Cell>
@@ -72,12 +72,12 @@ const MainInfoContainer = ({
 				{getIconForKeyword(locale.descriptions[0], time)}
 			</IconCell>
 			<Cell row="3" col="2">
-				<TemperatureText>
+				<TemperatureText className="temperature-text">
 					{`${locale.temperature} ${units.temperature}`}
 				</TemperatureText>
 			</Cell>
 			<Cell row="4" col="2">
-				<FeelsLikeText>
+				<FeelsLikeText className="feels-like-text">
 					{`/ feels like ${locale.feelsLike} ${units.temperature}`}
 				</FeelsLikeText>
 			</Cell>

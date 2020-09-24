@@ -1,5 +1,3 @@
-import { mergeNoteLists } from "./note-list-tools";
-
 /**
  * Used to define the scale for requests for the weatherstack API. Requests may return values in:
  *   - Metric units:

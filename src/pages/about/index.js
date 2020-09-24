@@ -73,9 +73,9 @@ const Body = () => {
 					</Cell>
 					<Cell row="2">
 						<BodyText>
-							Umbrella Whether is a simple weather-tracking app created using React and OpenWeatherMap's current weather API.<br/><br/>
+							Umbrella Whether is a simple weather-tracking app created using React and <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeatherMap</a>'s current weather API.<br/><br/>
 
-							All icons used in the app are courtesy <a href="https://fontawesome.com/license/free" target="_blank">Font Awesome</a>.
+							All icons used in the app are courtesy <a href="https://fontawesome.com/license/free" target="_blank" rel="noopener noreferrer">Font Awesome</a>.
 						</BodyText>
 					</Cell>
 				</Grid>

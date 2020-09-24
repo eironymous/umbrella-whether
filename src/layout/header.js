@@ -53,6 +53,14 @@ const ScaleButton = styled.div`
 	}
 `;
 
+/**
+ * Processes search strings.
+ * Makes a few assumptions:
+ * 	- That the first search term is a city/location name
+ * 	- That any subsequent search terms are separated from the first by a comma.
+ * 
+ * @param {String} val 
+ */
 const processSearchTerms = (val) => {
 	const values = val.trim().split(",");
 

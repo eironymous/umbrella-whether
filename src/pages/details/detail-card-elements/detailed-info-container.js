@@ -71,7 +71,7 @@ const DetailedInfoContainer = ({
 				</InfoLabel>
 			</Cell>
 			<Cell col="2">
-				<InfoText>
+				<InfoText className="observation-time-text">
 					{time}
 				</InfoText>
 			</Cell>
@@ -83,6 +83,7 @@ const DetailedInfoContainer = ({
 							onClick={() => dispatch(setFavorite({ id: locale.id, favorite: false, allLocales: allLocales.locales }))} 
 							onMouseOver={showTooltip}
 							onMouseOut={hideTooltip}
+							className="favorite-icon"
 						/>
 					}
 					{!locale.favorited &&
@@ -91,6 +92,7 @@ const DetailedInfoContainer = ({
 							onClick={() => dispatch(setFavorite({ id: locale.id, favorite: true, allLocales: allLocales.locales }))} 
 							onMouseOver={showTooltip}
 							onMouseOut={hideTooltip}
+							className="favorite-icon"
 						/>
 					}
 				</HeartIconContainer>
@@ -101,7 +103,7 @@ const DetailedInfoContainer = ({
 				</InfoLabel>
 			</Cell>
 			<Cell row="2" col="2">
-				<InfoText>
+				<InfoText className="description-text">
 					{locale.descriptions.map((desc, idx) =>
 						<React.Fragment key={`${desc}-${idx}`}>{desc}</React.Fragment>
 					)}
@@ -113,7 +115,7 @@ const DetailedInfoContainer = ({
 				</InfoLabel>
 			</Cell>
 			<Cell row="3" col="2">
-				<InfoText>
+				<InfoText className="wind-text">
 					{`${locale.windDirection || 0}, ${locale.windSpeed} ${units.windSpeed}`}
 				</InfoText>
 			</Cell>
@@ -123,7 +125,7 @@ const DetailedInfoContainer = ({
 				</InfoLabel>
 			</Cell>
 			<Cell row="4" col="2">
-				<InfoText>
+				<InfoText className="pressure-text">
 					{`${locale.pressure || 0} ${units.pressure}`}
 				</InfoText>
 			</Cell>
@@ -133,7 +135,7 @@ const DetailedInfoContainer = ({
 				</InfoLabel>
 			</Cell>
 			<Cell row="5" col="2">
-				<InfoText>
+				<InfoText className="rain-text">
 					{`${get(locale.rain, "1h", undefined) || get(locale.rain, "3h", 0)} ${units.precip}`}
 				</InfoText>
 			</Cell>
@@ -143,7 +145,7 @@ const DetailedInfoContainer = ({
 				</InfoLabel>
 			</Cell>
 			<Cell row="6" col="2">
-				<InfoText>
+				<InfoText className="snow-text">
 					{`${get(locale.snow, "1h", undefined) || get(locale.snow, "3h", 0)} ${units.totalSnow}`}
 				</InfoText>
 			</Cell>
@@ -153,7 +155,7 @@ const DetailedInfoContainer = ({
 				</InfoLabel>
 			</Cell>
 			<Cell row="7" col="2">
-				<InfoText>
+				<InfoText className="cloud-cover-text">
 					{`${locale.cloudCover || 0}%`}
 				</InfoText>
 			</Cell>
@@ -163,7 +165,7 @@ const DetailedInfoContainer = ({
 				</InfoLabel>
 			</Cell>
 			<Cell row="8" col="2">
-				<InfoText>
+				<InfoText className="humidity-text">
 					{`${locale.humidity || 0}%`}
 				</InfoText>
 			</Cell>
@@ -173,7 +175,7 @@ const DetailedInfoContainer = ({
 				</InfoLabel>
 			</Cell>
 			<Cell row="9" col="2">
-				<InfoText>
+				<InfoText className="visibility-text">
 					{`${locale.visibility || 0} ${units.visibility}`}
 				</InfoText>
 			</Cell>

@@ -11,6 +11,8 @@
     "@reduxjs/toolkit": "^1.4.0",
     "axios": "^0.20.0",
     "cra-template": "1.0.3",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.4",
     "lodash": "^4.17.20",
     "luxon": "^1.25.0",
     "react": "^16.13.1",

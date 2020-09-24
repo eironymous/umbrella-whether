@@ -4,6 +4,7 @@ import { selectActive, selectAllRoutes } from "./state/router-slice";
 import Home from "./pages/home/index";
 import Details from "./pages/details/index";
 import About from "./pages/about/index";
+import ErrorPage from "./pages/error_page/index";
 
 export default () => {
 	const currentRoute = useSelector(selectActive);
@@ -22,6 +23,6 @@ export default () => {
 		}
 		case (currentRoute === allRoutes.about):
 			return <About activeRoute={currentRoute} allRoutes={allRoutes} />
-		default: return <Home activeRoute={currentRoute} allRoutes={allRoutes} />;
+		default: return <ErrorPage activeRoute={currentRoute} allRoutes={allRoutes} />;
 	}
 }

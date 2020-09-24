@@ -94,12 +94,12 @@ const NoteModule = ({
 				y={tooltip.y}
 			/>
 			<Cell col="1/span 3">
-				<NoteDisplay>
+				<NoteDisplay className="note-body-text">
 					{note.body}
 				</NoteDisplay>
 			</Cell>
 			<Cell row="2">
-				<TimestampDisplay>
+				<TimestampDisplay className="note-timestamp-text">
 					{note.timeStamp}
 				</TimestampDisplay>
 			</Cell>

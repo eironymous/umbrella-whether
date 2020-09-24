@@ -12,6 +12,7 @@ export const routerSlice = createSlice({
 			details: "details-",
 			about: "about",
 			help: "help",
+			error: "error",
 		}
 	},
 	reducers: {

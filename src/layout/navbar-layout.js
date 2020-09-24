@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Grid, Cell } from "./grid-items";
 import Navbar from "./nav-list";
 import Header from "./header";
+import { useDispatch, useSelector } from "react-redux";
+import { setNavOpen, selectNavOpen } from "../state/app-settings-slice";
 
 const NavbarLayout = styled.div`
 	position: relative;
@@ -43,10 +45,11 @@ export default ({
 	activeRoute,
 	allRoutes,
 }) => {
-	const [ navbarExpanded, setNavbarExpanded ] = React.useState(true);
+	const dispatch = useDispatch();
+	const navbarExpanded = useSelector(selectNavOpen);
 
 	const toggleNavbar = () => {
-		setNavbarExpanded(!navbarExpanded);
+		dispatch(setNavOpen(!navbarExpanded));
 	}
 
 	const navWidth = navbarExpanded ? "225px" : "70px";

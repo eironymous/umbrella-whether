@@ -30,8 +30,18 @@ const TextContainer = styled.div`
 	font-weight: 800;
 `;
 
+const HiddenHeader = styled.h1`
+	overflow: hidden;
+	position: fixed;
+	height: 0px;
+	width: 0px;
+	opacity: 0;
+`;
+
 const EmptyState = () => {
 	return (
+		<>
+		<HiddenHeader>home</HiddenHeader>
 		<Parent rows="min-content min-content" columns="1fr">
 			<Cell>
 				<IconContainer>
@@ -44,6 +54,7 @@ const EmptyState = () => {
 				</TextContainer>
 			</Cell>
 		</Parent>
+		</>
 	)
 };
 

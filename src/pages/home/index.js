@@ -1,13 +1,15 @@
 import React from "react";
+import styled from "styled-components";
 import { Offline, Online } from "react-detect-offline";
+import { pullAllWith, isEqual} from "lodash";
 import Layout from "../../layout/navbar-layout";
 import Table from "./home-body";
 import { parseResults } from "../../app/manage-query-results";
 import { fetchList, fetchUpdates, getWeatherByCoordinates } from "../../app/fetch-weather-for-locale";
-import { setLocales, mergeLocales, selectLocales, selectLocaleByCity } from "../../state/locales-slice";
-import { setNotes } from "../../state/notes-slice";
+import { setLocales, deleteById, mergeLocales, selectLocales } from "../../state/locales-slice";
+import { setNotes, deleteByLocale } from "../../state/notes-slice";
 import { updateRoute } from "../../state/router-slice";
-import { selectFirstVisit, selectUnits, setUnits, setFirstVisit } from "../../state/app-settings-slice";
+import { selectFirstVisit, selectUnits, setFirstVisit } from "../../state/app-settings-slice";
 import { useDispatch, useSelector } from "react-redux";
 import EmptyState from "./empty-state";
 
@@ -29,9 +31,16 @@ const defaultQueries = [
 	"Tokyo"
 ];
 
+const HiddenHeader = styled.h1`
+	overflow: hidden;
+	position: fixed;
+	height: 0px;
+	width: 0px;
+	visibility:  hidden;
+`;
 
 
-const Body = () => {
+const Body = ({ state, setState }) => {
 	const dispatch = useDispatch();
 	const [ loaded, setLoaded ] = React.useState(false);
 	const [ geolocation, setGeolocation ] = React.useState(undefined);
@@ -41,7 +50,8 @@ const Body = () => {
 	const units = useSelector(selectUnits);
 
 	const queryPermissions = () => {
-		navigator.permissions.query({ name: "geolocation" }).then((result) => {
+		if (navigator && navigator.permissions) {
+			navigator.permissions.query({ name: "geolocation" }).then((result) => {
 			console.log(result)
 			if (result.state === "granted") {
 				setGeolocation(result.state);
@@ -54,7 +64,8 @@ const Body = () => {
 			result.onchange = () => {
 				setGeolocation(result.state);
 			}
-		})
+			}).catch((err) => console.log(err));	
+		}
 	};
 
 	const getWeatherByGeolocation = async (location) => {
@@ -115,8 +126,14 @@ const Body = () => {
 			//Generate and populate list of fresh results
 			const newList = [];
 
+
 			if (result.length) {
-				result.forEach((res) => newList.push(parseResults(res, units)));
+				result.forEach((res) => {
+					if(res !== undefined) {
+						newList.push(parseResults(res, units));
+					}
+						
+				});
 			}
 
 			if (storedLocales.locales.length) {
@@ -140,35 +157,69 @@ const Body = () => {
 	}
 
 	return (
-		<Table items={storedLocales.locales } loaded={loaded} />
+		<>
+			<HiddenHeader>home</HiddenHeader>
+			<Table items={storedLocales.locales} state={state} setState={setState} loaded={loaded} />
+		</>
 	)
 }
 
 const OfflineBody = () => {
 	const storedLocales = useSelector(selectLocales);
 
-	if (storedLocales.locales === undefined || storedLocales.locales.length === 0) {
+	if (storedLocales === undefined || storedLocales.locales.length === 0) {
 		return <EmptyState />
 	}
 
 	return (
-		<Table items={storedLocales.locales} />
+		<>
+			<HiddenHeader>home</HiddenHeader>
+			<Table items={storedLocales.locales} loaded={true} />
+		</>
 	)
 }
 
 export default ({ activeRoute, allRoutes }) => {
+	const dispatch = useDispatch();
+	const [state, setState] = React.useState({
+		activeHeartTooltip: {
+			id: -1,
+			x: 0,
+			y: 0,
+		},
+		activeEyeTooltip: {
+			id: -1,
+			x: 0,
+			y: 0,
+		},
+		activeDeleteTooltip: {
+			id: -1,
+			x: 0,
+			y: 0,
+		},
+		promptModalVisible: false,
+		activeEntry: -1,
+	});
+
+	const onDeleteEntry = () => {
+		//Delete the entry...
+		dispatch(deleteById(state.activeEntry));
+		//...and any associated notes
+		dispatch(deleteByLocale(state.activeEntry));
+	};
+
 	return(
 		<>
 			<Online>
 				<Layout 
-					Main={Body}
+					Main={() => <Body state={state} setState={setState} onDeleteEntry={onDeleteEntry} />}
 					activeRoute={activeRoute}
 					allRoutes={allRoutes}
 				/>
 			</Online>
 			<Offline>
 				<Layout 
-					Main={OfflineBody}
+					Main={() => <OfflineBody state={state} setState={setState} onDeleteEntry={onDeleteEntry} />}
 					activeRoute={activeRoute}
 					allRoutes={allRoutes}
 				/>

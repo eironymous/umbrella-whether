@@ -18,7 +18,7 @@ export const fetchWeather = (locale, scale = METRIC_SCALE) => {
 	}
 
 	//Make request, extract data from promise and return
-	return axiosRequest(locale, scale).then(data => data);
+	return axiosRequest(locale, scale).then(data => data).catch((err) => console.log(err));
 }
 
 /**
@@ -32,7 +32,7 @@ export const getWeatherByCoordinates = (lat, lon, scale = METRIC_SCALE) => {
 		throw TypeError("fetch-weather-for-locale: Invalid scale parameter passed.")
 	}
 
-	return axiosByCoords(lat, lon, scale).then(data => data);
+	return axiosByCoords(lat, lon, scale).then(data => data).catch(err => console.log(err));
 }
 
 /**
@@ -55,7 +55,7 @@ export const fetchList = (localeList, scale = METRIC_SCALE) => {
 		list.push(axiosRequest(locale, scale));
 	});
 
-	return Promise.all(list).then((vals) => vals);
+	return Promise.all(list).then((vals) => vals).catch((err) => console.log(err));
 }
 
 /**
@@ -79,7 +79,7 @@ export const fetchUpdates = (locales, scale = METRIC_SCALE) => {
 		list.push(axiosRequest(`${locale.city},${locale.country}`, scale));
 	});
 
-	return Promise.all(list).then((vals) => vals);
+	return Promise.all(list).then((vals) => vals).catch((err) => console.log(err));
 }
 
 //Performs axios request
